@@ -7,53 +7,86 @@
 </head>
 
 <body>
+  <!-- 
+    사용자 : 사이트에 들어와 포트폴리오를 보는 사람.
+    목적 : 나의 학습 과정과 방향을 한눈에 파악 한다.
+    핵심 행동 : 학습 기록을 읽고 이해한다.
+    정보 순서 : 소개 > 학습과목 > 학습 로드맵 > contact
+  -->
   <header>
-
     <h1>Study Note</h1>
     <p> UI/UX, Unity, Unreal Engine의 학습 내용을 기록합니다.</p>
+
+    <nav aria-label="Main Navigation">
+      <a href="#about">소개</a>
+      <a href="#subjects">학습과목</a>
+      <a href="#roadmap">학습 로드맵</a>
+      <a href="#contact">Contact</a>
+
+    </nav>
   </header>
 
-  <h2> 소개 </h2>
-  <h3> 3D Environment Artist / 컴퓨터 공학 전공 중 </h3>
+  <main>
+    <section id="about">
+       <!-- 소개와 이미지 -->
+      <h2> 소개 </h2>
+      <h3> 3D Environment Artist / 컴퓨터 공학 전공 중 </h3>
+  
+    <img src="assets/images/profile.jpg" alt="프로필 이미지">
+    <p> 안녕하세요! 저는 3D Environment Artist로 꾸준한 성장을 목표로 하고 있습니다.</p>
+    <p> 현재 컴퓨터 공학을 전공하며, UI/UX, Unity, Unreal Engine 과 다양한 분야의 AI 학습을 진행하고 있습니다.</p>
+    <p> 이 사이트는 제가 학습한 내용을 기록하고, 포트폴리오를 공유하기 위해 제작되었습니다.</p>
+    </section>  
 
-  <img src="assets/images/profile.jpg" alt="프로필 이미지">
+    <section id= "subjects">
+      <!-- 학습 과목 목록 -->
+      <h2> 학습과목  </h2>
+      <ul>
+        <li>
+          <h3>UI/UX</h3>
+          <p>웹페이지 구조와 사용자 경험 설계에 대해 배웁니다.</p>
+        </li>
+        <li>
+          <h3>Unity</h3>
+          <p>Unity 엔진을 사용한 엔진 기초와 씬 구성을 배웁니다.</p>
+        </li>
+        <li>
+          <h3>Unreal Engine</h3>
+          <p>Unreal Engine을 사용한 3D 그래픽 및 게임 개발에 대해 배웁니다.</p>
+        </li>
+      </ul>
+      </section>
 
-  <h2> 학습과목  </h2>
-  <ul>
-    <li>
-      <h3>UI/UX</h3>
-      <p>웹페이지 구조와 사용자 경험 설계에 대해 배웁니다.</p>
-    </li>
-    <li>
-      <h3>Unity</h3>
-      <p>Unity 엔진을 사용한 엔진 기초와 씬 구성을 배웁니다.</p>
-    </li>
-    <li>
-      <h3>Unreal Engine</h3>
-      <p>Unreal Engine을 사용한 3D 그래픽 및 게임 개발에 대해 배웁니다.</p>
-    </li>
-  </ul>
-  <!--학습 기록 -->
+    <section id= "roadmap">
+      <!-- 학습 로드 맵 -->
+      <h2> 학습 로드맵 </h2>
+      <ol>
+        <li>HTML/CSS 기초</li>
+        <li>Unity 씬 구성</li>
+        <li>Unreal Engine 기초</li>
+        <li>에셋 검수 자동화 툴 제작</li>
+      </ol>
+      </section>
 
-  <!-- 학습 로드맵 -->
-  <h2> 학습 로드맵 </h2>
-  <ol>
-    <li>HTML/CSS 기초</li>
-    <li>Unity 씬 구성</li>
-    <li>Unreal Engine 기초</li>
-    <li>에셋 검수 자동화 툴 제작</li>
-  </ol>
+    <section id= "contact">
+      <!-- 연락처 -->
+      <h2> contact </h2>
+      <form>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email">
+    
+        <label for="message">Message:</label>
+        <textarea id="message" name="message"></textarea>
+    
+        <button type="submit">Send</button>
+      </form>
+    </section>    
 
-  <h2> contact </h2>
-  <form>
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email">
+  </main>
 
-    <label for="message">Message:</label>
-    <textarea id="message" name="message"></textarea>
-
-    <button type="submit">Send</button>
-  </form>
+  <footer>
+    <small>© 2026 Study Note. All rights reserved.</small>
+  </footer>
 
 </body>
 
