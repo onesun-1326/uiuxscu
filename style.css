@@ -96,10 +96,6 @@ p{
     카드너비는 최소 260px부터 남은 공간까지 사용*/
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     
-    /*카드가 좁게 눌리지않고 다음 줄로 이동 */
-    flex-wrap: wrap;
-
-    align-items: stretch;
     gap: 24px;
 }
 
@@ -223,6 +219,25 @@ button:active {
     button{
         /*모바일에서도 버튼의 누르는 영역이 너무 낮아지지 않게 설정*/
         min-height: 48px;
+    }
+
+    #submitMessage{
+        margin-top: 16px;
+        color: #555763;
+    }   
+
+    #submitMessage.is-success{
+        color: #245c3a;
+        background-color: #e7f7ed;
+        padding: 12px;
+        border-radius: 10px;
+        font-weight:700;
+    }
+
+    #submitButton:disabled{
+        color: #ffffff;
+        background-color: #a8a8b2;
+        cursor: not-allowed;
     }
 
 }
