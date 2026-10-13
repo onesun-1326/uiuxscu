@@ -45,26 +45,83 @@
       <p> 이 사이트는 제가 학습한 내용을 기록하고, 포트폴리오를 공유하기 위해 제작되었습니다.</p>
     </section>  
 
-    <section id= "subjects">
-      <!-- 사이트의 주요 기능 -->
-      <h2> 주요 기능 </h2>
+    <section id="features">
+      <h2>주요 기능</h2>
+
+      <div class="tabs" role="tablist" aria-label="주요 기능 선택">
+        <button 
+          type="button" 
+          class="tab is-active" 
+          data-target="#feature-subjects" 
+          aria-selected="true">
+          과목별 학습 정리
+        </button>
+
+        <button 
+          type="button" 
+          class="tab" 
+          data-target="#feature-roadmap" a
+          ria-selected="false">
+          학습 로드맵
+        </button>
+
+        <button 
+          type="button" 
+          class="tab" 
+          data-target="#feature-contact" 
+          aria-selected="false">
+          문의하기
+        </button>        
+      </div>
+
+      <div 
+        id="feature-subjects" 
+        class="panel is-active"
+        role="tabpanel"
+        aeia-labelledby="tab-practice">
+        <h3>과목별 학습 정리</h3>
+        <p>UI/UX, Unity, Unreal Engine에서 배운 내용을 과목별로 확인할 수 있습니다.</p>
+      </div>
+
+      <div 
+        id="feature-roadmap" 
+        class="panel" hidden
+        role="tabpanel"
+        aeia-labelledby="tab-practice">
+        <h3>학습 로드맵</h3>
+        <p>지금까지 배운 것과 앞으로 배울 것을 순서대로 볼 수 있습니다.</p>
+      </div>
+
+      <div 
+        id="feature-contact" 
+        class="panel" hidden
+        role="tabpanel"
+        aeia-labelledby="tab-practice">
+        <h3>문의하기</h3>
+        <p>이메일과 메시지를 남겨 작성자에게 바로 연락할 수 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- 학습 과목 목록 -->
+    <section id="subjects">
+      <h2>학습 과목</h2>
       <ul class="subjects-list">
-        <li class="subjects-card">
-          <h3>과목별 학습 정리</h3>
-          <p>UI/UX, Unity, Unreal Engine에서 배운 내용을 과목별로 확인할 수 있습니다.</p>
+        <li class="subjects-card" data-subject="uiux">
+          <h3>UI/UX</h3>
+          <p>웹페이지 구조와 사용자 경험 설계에 대해 배웁니다.</p>
         </li>
 
-        <li class="subjects-card">
-          <h3>학습 로드맵</h3>
-          <p>지금까지 배운 것과 앞으로 배울 것을 순서대로 볼 수 있습니다.</p>
+        <li class="subjects-card" data-subject="unity">
+          <h3>Unity</h3>
+          <p>Unity 기초와 씬 구성을 배웁니다.</p>
         </li>
 
-        <li class="subjects-card">
-          <h3>문의하기</h3>
-          <p>이메일과 메시지를 남겨 작성자에게 바로 연락할 수 있습니다.</p>
+        <li class="subjects-card" data-subject="unreal">
+          <h3>Unreal Engine</h3>
+          <p>Unreal Engine을 사용한 3D 그래픽 및 게임 개발에 대해 배웁니다.</p>
         </li>
       </ul>
-      </section>
+    </section>
 
     <section id= "roadmap">
       <!-- 학습 로드 맵 -->
@@ -75,6 +132,53 @@
         <li>Unreal Engine 기초</li>
         <li>에셋 검수 자동화 툴 제작</li>
       </ol>
+      </section>
+
+      <!--이벤트 페이지 실습-->   
+      <section id ="event-practice">
+        <h2>페이지 설정</h2>
+        <div class="event-grid">
+          <article class="event-card">
+            <h3> 테마 </h3>   <!--click이벤트-->
+            <p> 밝은 화면과 어두운 화면 중에서 고를 수 있습니다.</p>
+            <button id="themeButton" type="button">테마 바꾸기</button>
+          </article>
+
+          <article class="event-card">
+            <h3>학습 과목 필터</h3>  <!--change 이벤트-->
+            
+            <label class="checkrow">
+              <input type="checkbox" id="checkAll" checked>
+                전체
+            </label>
+
+             <label class="checkrow">
+              <input type="checkbox" class="subject-check" value="uiux" checked>
+                UI/UX
+             </label>
+
+            <label class="checkrow">
+              <input type="checkbox" class="subject-check" value="unity" checked>
+                Unity
+            </label>
+
+            <label class="checkrow">
+              <input type="checkbox" class="subject-check" value="unreal" checked>
+                Unreal Engine
+            </label>
+
+            <p id="filterStatus" aria-live="polite">보고싶은 과목을 선택할 수 있습니다.</p>
+          </article>
+
+          <article class="event-card">
+            <h3>방문자 인사</h3>  <!--input 이벤트-->
+            <label for="nickname">방문자 이름</label>
+            <input type="text" id="nickname" maxlength="10">
+            <p id="nicknameCount" aria-live="polite">0/10</p>
+            <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
+          </article>
+
+        </div>
       </section>
 
     <section id= "contact" class="contact-card">

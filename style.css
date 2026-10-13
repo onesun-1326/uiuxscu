@@ -95,7 +95,7 @@ p{
     /*들어갈 수 있는 만큼 열을 만들고,
     카드너비는 최소 260px부터 남은 공간까지 사용*/
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    
+
     gap: 24px;
 }
 
@@ -141,7 +141,7 @@ button {
     border: none;
     border-radius: 10px;
     color: #ffffff;
-    background-color: #635bff; 
+    background-color: #635bff;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
 }
@@ -152,18 +152,132 @@ button{
 }
 
 button:hover {
-    background-color: #4137ca; 
+    background-color: #4137ca;
 }
 
 button:focus,
 input:focus{
     outline: 3px solid #b3affc;
-    outline-offset: 2px;    
+    outline-offset: 2px;
 }
 
 button:active {
     transform: translateY(1px);
 }
+
+.tabs {
+    display: flex;
+
+    /* 자리가 부족하면 다음 줄로 넘어감 */
+    flex-wrap: wrap;
+
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.tab {
+    padding: 12px 20px;
+    border: 2px solid #deddea;
+    border-radius: 10px;
+    color: #5b5870;
+    background-color: #ffffff;
+
+    /* 기본은 가볍게 둬야 선택됐을 때 굵기 차이가 보인다 */
+    font-weight: 500;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.tab:hover {
+    background-color: #f4f3ff;
+}
+
+/* 색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없다 */
+.tab.is-active {
+    color: #635bff;
+    background-color: #ffffff;
+    border-color: #635bff;
+    border-bottom: 4px solid currentColor;
+    font-weight: 700;
+}
+
+.panel {
+    padding: 24px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #f4f3ff;
+}
+
+.event-grid{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 24px;
+}
+
+.event-card{
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #ffffff;
+}
+
+.event-card label:not(.checkrow){
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+}
+
+.event-card input[type="text"]{
+    width: 100%;
+}
+
+.checkrow{
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+}
+
+.checkrow input{
+    flex: 0 0 auto;
+    margin-top: 6px;
+}
+
+body.dark {
+  color: #e8e8ef;
+  background-color: #1a1a22;
+}
+
+body.dark p,
+body.dark nav a {
+  color: #b5b5c2;
+}
+
+body.dark .event-card,
+body.dark .subjects-card,
+body.dark .contact-card {
+  background-color: #26262f;
+  border-color: #3a3a46;
+}
+
+body.dark .tab {
+    color: #b5b5c2;
+    border-color: #3a3a46;
+    background-color: #26262f;
+}
+
+body.dark .tab.is-active {
+    color: #b3affc;
+    border-color: #b3affc;
+    background-color: #2f2f3d;
+}
+
+body.dark .panel {
+    background-color: #26262f;
+    border-color: #3a3a46;
+}
+
 
 /* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
@@ -194,7 +308,7 @@ button:active {
         align-items: stretch;
         gap: 8px;
     }
-    
+
     nav a{
         /*링크 글자 주변에도 누를 수 있는 여백 추가*/
         padding: 8px 0;
@@ -220,12 +334,24 @@ button:active {
         /*모바일에서도 버튼의 누르는 영역이 너무 낮아지지 않게 설정*/
         min-height: 48px;
     }
+
+    /* 위의 button width:100% 때문에 탭 3개가 세로로 길게 쌓인다
+       auto 로 되돌려 자리가 되는 만큼 가로로 두고, 모자라면 줄바꿈되게 함 */
+    .tabs{
+        flex-direction: column;
+        align-items: stretch;       
+    }
+
+    .tab{
+        width: 100%;
+        text-align: left;
+    }
 }
 
 #submitMessage{
      margin-top: 16px;
      color: #555763;
-}   
+}
 
 #submitMessage.is-success{
      color: #245c3a;
@@ -240,4 +366,3 @@ button:active {
      background-color: #a8a8b2;
      cursor: not-allowed;
 }
-
