@@ -14,97 +14,103 @@
 </head>
 
 <body>
-  <!-- 
+  <!--
     사용자 : 사이트에 들어와 포트폴리오를 보는 사람.
     목적 : 나의 학습 과정과 방향을 한눈에 파악 한다.
     핵심 행동 : 학습 기록을 읽고 포트폴리오를 확인한다. or 연락처를 통해 문의한다.
-    정보 순서 : 소개 > 학습과목 > 학습 로드맵 > contact
+    정보 순서 : 소개 > 주요 기능 > 학습 과목 > 학습 로드맵 > Contact
   -->
   <header>
-    <h1>Study Note</h1>
-    <p> UI/UX, Unity, Unreal Engine의 학습 내용을 기록합니다.</p>
+  <h1>Study Note</h1>
 
-    <nav aria-label="Main Navigation">
-      <a href="#about">소개</a>
-      <a href="#subjects">주요 기능</a>
-      <a href="#roadmap">학습 로드맵</a>
-      <a href="#contact">Contact</a>
+  <div class="header-row">
+    <p>UI/UX, Unity, Unreal Engine의 학습 내용을 기록합니다.</p>
 
-    </nav>
-  </header>
+    <!-- click 이벤트 -->
+    <button id="themeButton" type="button">테마 전환</button>
+  </div>
+
+  <nav aria-label="Main Navigation">
+    <a href="#about">소개</a>
+    <a href="#features">주요 기능</a>
+    <a href="#subjects">학습 과목</a>
+    <a href="#roadmap">학습 로드맵</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</header>
 
   <main>
+    <!-- 소개와 이미지 -->
     <section id="about">
-      <!-- 소개와 이미지 -->
-      <h2> 소개 </h2>
-      <h3> 3D Environment Artist / 컴퓨터 공학 전공 중 </h3>
-  
-      <img src="assets/images/profile.jpg" alt="프로필 이미지">
-      <p> 안녕하세요! 저는 3D Environment Artist로 꾸준한 성장을 목표로 하고 있습니다.</p>
-      <p> 현재 컴퓨터 공학을 전공하며, UI/UX, Unity, Unreal Engine 과 다양한 분야의 AI 학습을 진행하고 있습니다.</p>
-      <p> 이 사이트는 제가 학습한 내용을 기록하고, 포트폴리오를 공유하기 위해 제작되었습니다.</p>
-    </section>  
+      <h2>소개</h2>
+      <h3>3D Environment Artist / 컴퓨터 공학 전공 중</h3>
 
+      <img src="assets/images/profile.jpg" alt="프로필 이미지">
+
+      <p>안녕하세요! 저는 3D Environment Artist로 꾸준한 성장을 목표로 하고 있습니다.</p>
+      <p>현재 컴퓨터 공학을 전공하며, UI/UX, Unity, Unreal Engine과 다양한 분야의 AI 학습을 진행하고 있습니다.</p>
+      <p>이 사이트는 제가 학습한 내용을 기록하고, 포트폴리오를 공유하기 위해 제작되었습니다.</p>
+    </section>
+
+    <!-- 사이트의 주요 기능 : 탭으로 전환 -->
     <section id="features">
       <h2>주요 기능</h2>
 
+      <!-- click 이벤트 : 탭 전환 -->
       <div class="tabs" role="tablist" aria-label="주요 기능 선택">
-        <button 
-          type="button" 
-          class="tab is-active" 
-          data-target="#feature-subjects" 
-          aria-selected="true">
-          과목별 학습 정리
-        </button>
-
-        <button 
-          type="button" 
-          class="tab" 
-          data-target="#feature-roadmap" a
-          ria-selected="false">
-          학습 로드맵
-        </button>
-
-        <button 
-          type="button" 
-          class="tab" 
-          data-target="#feature-contact" 
-          aria-selected="false">
-          문의하기
-        </button>        
+        <button type="button" class="tab is-active" data-target="#feature-subjects" aria-selected="true">과목별 학습 정리</button>
+        <button type="button" class="tab" data-target="#feature-roadmap" aria-selected="false">학습 로드맵</button>
+        <button type="button" class="tab" data-target="#feature-contact" aria-selected="false">문의하기</button>
       </div>
 
-      <div 
-        id="feature-subjects" 
-        class="panel is-active"
-        role="tabpanel"
-        aeia-labelledby="tab-practice">
+      <div id="feature-subjects" class="panel is-active">
         <h3>과목별 학습 정리</h3>
         <p>UI/UX, Unity, Unreal Engine에서 배운 내용을 과목별로 확인할 수 있습니다.</p>
+        <p>보고 싶은 과목만 골라서 볼 수 있도록 필터를 제공합니다.</p>
       </div>
 
-      <div 
-        id="feature-roadmap" 
-        class="panel" hidden
-        role="tabpanel"
-        aeia-labelledby="tab-practice">
+      <div id="feature-roadmap" class="panel" hidden>
         <h3>학습 로드맵</h3>
         <p>지금까지 배운 것과 앞으로 배울 것을 순서대로 볼 수 있습니다.</p>
+        <p>기초부터 실무에 쓰이는 도구 제작까지의 흐름을 담았습니다.</p>
       </div>
 
-      <div 
-        id="feature-contact" 
-        class="panel" hidden
-        role="tabpanel"
-        aeia-labelledby="tab-practice">
+      <div id="feature-contact" class="panel" hidden>
         <h3>문의하기</h3>
         <p>이메일과 메시지를 남겨 작성자에게 바로 연락할 수 있습니다.</p>
+        <p>협업 문의와 작업 문의를 구분해서 남길 수 있습니다.</p>
       </div>
     </section>
 
     <!-- 학습 과목 목록 -->
     <section id="subjects">
       <h2>학습 과목</h2>
+
+      <!-- change 이벤트 : 과목 필터 -->
+      <div class="subject-filter">
+        <label class="checkrow">
+          <input type="checkbox" id="checkAll" checked>
+          전체
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="subject-check" value="uiux" checked>
+          UI/UX
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="subject-check" value="unity" checked>
+          Unity
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="subject-check" value="unreal" checked>
+          Unreal Engine
+        </label>
+      </div>
+
+      <p id="filterStatus" aria-live="polite">전체 과목을 보여주는 중입니다.</p>
+
       <ul class="subjects-list">
         <li class="subjects-card" data-subject="uiux">
           <h3>UI/UX</h3>
@@ -123,82 +129,53 @@
       </ul>
     </section>
 
-    <section id= "roadmap">
-      <!-- 학습 로드 맵 -->
-      <h2> 학습 로드맵 </h2>
+    <!-- 학습 로드맵 -->
+    <section id="roadmap">
+      <h2>학습 로드맵</h2>
       <ol>
         <li>HTML/CSS 기초</li>
         <li>Unity 씬 구성</li>
         <li>Unreal Engine 기초</li>
         <li>에셋 검수 자동화 툴 제작</li>
       </ol>
-      </section>
+    </section>
 
-      <!--이벤트 페이지 실습-->   
-      <section id ="event-practice">
-        <h2>페이지 설정</h2>
-        <div class="event-grid">
-          <article class="event-card">
-            <h3> 테마 </h3>   <!--click이벤트-->
-            <p> 밝은 화면과 어두운 화면 중에서 고를 수 있습니다.</p>
-            <button id="themeButton" type="button">테마 바꾸기</button>
-          </article>
+    <!-- 연락처 -->
+    <section id="contact" class="contact-card">
+      <h2>Contact</h2>
 
-          <article class="event-card">
-            <h3>학습 과목 필터</h3>  <!--change 이벤트-->
-            
-            <label class="checkrow">
-              <input type="checkbox" id="checkAll" checked>
-                전체
-            </label>
+      <!-- input 이벤트의 결과가 표시되는 자리 -->
+      <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
 
-             <label class="checkrow">
-              <input type="checkbox" class="subject-check" value="uiux" checked>
-                UI/UX
-             </label>
-
-            <label class="checkrow">
-              <input type="checkbox" class="subject-check" value="unity" checked>
-                Unity
-            </label>
-
-            <label class="checkrow">
-              <input type="checkbox" class="subject-check" value="unreal" checked>
-                Unreal Engine
-            </label>
-
-            <p id="filterStatus" aria-live="polite">보고싶은 과목을 선택할 수 있습니다.</p>
-          </article>
-
-          <article class="event-card">
-            <h3>방문자 인사</h3>  <!--input 이벤트-->
-            <label for="nickname">방문자 이름</label>
-            <input type="text" id="nickname" maxlength="10">
-            <p id="nicknameCount" aria-live="polite">0/10</p>
-            <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
-          </article>
-
-        </div>
-      </section>
-
-    <section id= "contact" class="contact-card">
-
-      <!-- 연락처 -->
-      <h2> Contact </h2>
       <form id="contact-form">
-        <label for="email">Email:</label>
+        <!-- input 이벤트 : 이름 입력 -->
+        <label for="visitorName">이름</label>
+        <input type="text" id="visitorName" name="visitorName" maxlength="10">
+
+        <label for="email">Email</label>
         <input type="email" id="email" name="email">
-    
-        <label for="message">Message:</label>
+
+        <!-- change 이벤트 : 문의 유형 선택 -->
+        <label for="inquiryType">문의 유형</label>
+        <select id="inquiryType" name="inquiryType">
+          <option value="collab">협업 문의</option>
+          <option value="work">작업 문의</option>
+          <option value="etc">기타</option>
+        </select>
+
+        <p id="inquiryGuide" aria-live="polite">프로젝트 기간과 작업 범위를 함께 적어주세요.</p>
+
+        <label for="message">Message</label>
         <textarea id="message" name="message"></textarea>
-    
+
         <button id="submitButton" type="submit">Send</button>
       </form>
-      <p id="submitMessage" aria-live="polite" >  
-         이메일과 메세지를 입력하고 메일을 보내주세요. 
-      </p> <!-- 제출 후 메시지 표시 -->
 
-    </section>    
+      <!-- 제출 후 메시지 표시 -->
+      <p id="submitMessage" aria-live="polite">
+        이메일과 메시지를 입력하고 메일을 보내주세요.
+      </p>
+    </section>
 
   </main>
 
@@ -206,7 +183,8 @@
     <small>© 2026 Study Note. All rights reserved.</small>
   </footer>
 
-  <script src="script.js"></script> <!-- 자바스크립트 연결 -->
+  <!-- 자바스크립트 연결 -->
+  <script src="script.js"></script>
 
 </body>
 

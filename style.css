@@ -44,6 +44,25 @@ footer{
     padding-bottom: 32px;
 }
 
+*,
+*::before,
+*::after{
+    box-sizing: border-box;
+}
+
+/* ===== 헤더 : 메뉴와 테마 버튼을 한 줄에 배치 ===== */
+.header-row{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.header-row p{
+    margin: 0;
+}
+
 nav{
     display: flex;
 
@@ -59,6 +78,9 @@ nav a {
     font-weight: 700;
     text-decoration: none;
 }
+
+
+/* ===== 글자 ===== */
 
 h1{
     font-size: 72px;
@@ -85,6 +107,136 @@ p{
     line-height: 1.7;
 }
 
+
+/* ===== 입력 요소 공통 ===== */
+
+input,
+select,
+textarea{
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #b8b7c5;
+    border-radius: 10px;
+}
+
+textarea{
+    min-height: 120px;
+    resize: vertical;
+}
+
+button {
+    padding: 12px 18px;
+    border: none;
+    border-radius: 10px;
+    color: #ffffff;
+    background-color: #635bff;
+    cursor: pointer;
+    transition: background-color 0.2s, transform 0.2s;
+}
+
+input,
+select,
+textarea,
+button{
+    font: inherit;
+}
+
+button:hover {
+    background-color: #4137ca;
+}
+
+button:focus,
+input:focus,
+select:focus,
+textarea:focus{
+    outline: 3px solid #b3affc;
+    outline-offset: 2px;
+}
+
+button:active {
+    transform: translateY(1px);
+}
+
+
+/* ===== 주요 기능 탭 =====
+   위의 button 규칙(보라 배경 + 흰 글씨)을 덮어써야 하므로
+   반드시 button 규칙 "아래쪽"에 작성합니다.
+   우선순위가 같을 때는 나중에 쓴 규칙이 이깁니다.          */
+
+.tabs {
+    display: flex;
+
+    /* 자리가 부족하면 다음 줄로 넘어감 */
+    flex-wrap: wrap;
+
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.tab {
+    padding: 12px 20px;
+    border: 2px solid #deddea;
+    border-radius: 10px;
+    color: #5b5870;
+    background-color: #ffffff;
+
+    /* 기본은 가볍게 둬야 선택됐을 때 굵기 차이가 보입니다 */
+    font-weight: 500;
+    text-decoration: none;
+
+    cursor: pointer;
+}
+
+.tab:hover {
+    background-color: #f4f3ff;
+}
+
+/* 선택된 탭 : 색 + 굵기 + 밑줄 세 가지로 표시
+   색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없습니다 */
+.tab.is-active {
+color: #635bff;
+    border-color: #635bff;
+    background-color: #f4f3ff;
+    font-weight: 800;                /* 굵기 */
+    text-decoration: underline;      /* 밑줄 */
+        text-underline-offset: 4px;      /* 받침과 밑줄이 겹치지 않게 띄움 */
+}
+
+.panel {
+    padding: 24px;
+    border: 1px solid #deddea;
+    border-radius: 12px;
+    background-color: #f4f3ff;
+}
+
+
+/* ===== 학습 과목 : 필터와 카드 ===== */
+
+.subject-filter{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 8px;
+}
+
+.checkrow{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* 체크박스는 글자 옆에 작게 두어야 하므로 너비를 되돌립니다 */
+.checkrow input[type="checkbox"]{
+    width: auto;
+    flex: 0 0 auto;
+}
+
+#filterStatus{
+    margin-top: 0;
+    margin-bottom: 24px;
+}
+
 .subjects-list {
     list-style-type: none;
     padding-left: 0;
@@ -108,11 +260,8 @@ p{
     background-color: #f4f3ff;
 }
 
-*,
-*::before,
-*::after{
-    box-sizing: border-box;
-}
+
+/* ===== Contact ===== */
 
 .contact-card {
     padding: 24px;
@@ -122,127 +271,79 @@ p{
     border-radius: 12px;
 }
 
+/* 입력 항목이 여러 개이므로 세로로 배치합니다 */
 form {
     display: flex;
-    align-items: center;
+    flex-direction: column;
+    align-items: stretch;
     gap: 12px;
 }
 
-input{
-    flex: 1;
-    min-width: 0;
-    padding: 12px;
-    border: 1px solid #b8b7c5;
-    border-radius: 10px;
+form label{
+    font-weight: 700;
+    margin-bottom: -4px;
 }
 
-button {
-    padding: 12px 18px;
-    border: none;
-    border-radius: 10px;
+#submitButton{
+    /* 버튼만 내용 너비로 두어 폼이 답답해 보이지 않게 합니다 */
+    align-self: flex-start;
+    margin-top: 8px;
+}
+
+#greeting{
+    font-weight: 700;
+    color: #555763;
+    margin-top: 0;
+}
+
+#inquiryGuide{
+    margin-top: 0;
+    font-size: 0.95em;
+}
+
+#submitMessage{
+     margin-top: 16px;
+     color: #555763;
+}
+
+#submitMessage.is-success{
+     color: #245c3a;
+     background-color: #e7f7ed;
+     padding: 12px;
+     border-radius: 10px;
+     font-weight:700;
+}
+
+#submitButton:disabled{
+     color: #ffffff;
+     background-color: #a8a8b2;
+     cursor: not-allowed;
+}
+
+/* 테마 버튼 : 보조 기능이라 외곽선만 */
+#themeButton{
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 0.9em;
     color: #ffffff;
     background-color: #635bff;
-    cursor: pointer;
-    transition: background-color 0.2s, transform 0.2s;
+    border: 1px solid #deddea;
 }
 
-input,
-button{
-    font: inherit;
-}
-
-button:hover {
-    background-color: #4137ca;
-}
-
-button:focus,
-input:focus{
-    outline: 3px solid #b3affc;
-    outline-offset: 2px;
-}
-
-button:active {
-    transform: translateY(1px);
-}
-
-.tabs {
-    display: flex;
-
-    /* 자리가 부족하면 다음 줄로 넘어감 */
-    flex-wrap: wrap;
-
-    gap: 12px;
-    margin-bottom: 24px;
-}
-
-.tab {
-    padding: 12px 20px;
-    border: 2px solid #deddea;
-    border-radius: 10px;
-    color: #5b5870;
-    background-color: #ffffff;
-
-    /* 기본은 가볍게 둬야 선택됐을 때 굵기 차이가 보인다 */
-    font-weight: 500;
-    text-decoration: none;
-
-    cursor: pointer;
-}
-
-.tab:hover {
+#themeButton:hover{
     background-color: #f4f3ff;
 }
 
-/* 색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없다 */
-.tab.is-active {
-    color: #635bff;
-    background-color: #ffffff;
-    border-color: #635bff;
-    border-bottom: 4px solid currentColor;
-    font-weight: 700;
+body.dark #themeButton{
+    color: #b5b5c2;
+    border-color: #3a3a46;
 }
 
-.panel {
-    padding: 24px;
-    border: 1px solid #deddea;
-    border-radius: 12px;
-    background-color: #f4f3ff;
+body.dark #themeButton:hover{
+    background-color: #2f2f3d;
 }
 
-.event-grid{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-    gap: 24px;
-}
-
-.event-card{
-    min-width: 0;
-    padding: 24px;
-    border: 1px solid #deddea;
-    border-radius: 12px;
-    background-color: #ffffff;
-}
-
-.event-card label:not(.checkrow){
-    display: block;
-    margin-bottom: 8px;
-    font-weight: 700;
-}
-
-.event-card input[type="text"]{
-    width: 100%;
-}
-
-.checkrow{
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-}
-
-.checkrow input{
-    flex: 0 0 auto;
-    margin-top: 6px;
-}
+/* ===== 다크 모드 ===== */
 
 body.dark {
   color: #e8e8ef;
@@ -254,9 +355,9 @@ body.dark nav a {
   color: #b5b5c2;
 }
 
-body.dark .event-card,
 body.dark .subjects-card,
-body.dark .contact-card {
+body.dark .contact-card,
+body.dark .panel {
   background-color: #26262f;
   border-color: #3a3a46;
 }
@@ -273,9 +374,16 @@ body.dark .tab.is-active {
     background-color: #2f2f3d;
 }
 
-body.dark .panel {
-    background-color: #26262f;
+body.dark input,
+body.dark select,
+body.dark textarea {
+    color: #e8e8ef;
+    background-color: #1f1f28;
     border-color: #3a3a46;
+}
+
+body.dark #greeting {
+    color: #b3affc;
 }
 
 
@@ -302,6 +410,13 @@ body.dark .panel {
         font-size: 28px;
     }
 
+    /* 메뉴와 테마 버튼을 위에서 아래로 배치 */
+    .header-row{
+        flex-direction: column;
+        align-items: flex-start;   /* stretch → flex-start */
+        gap: 8px;
+    }
+
     /*가로메뉴를 위에서 아래로 배치*/
     nav{
         flex-direction: column;
@@ -319,50 +434,24 @@ body.dark .panel {
         grid-template-columns: 1fr;
     }
 
-    /*이메일 입력창과 버튼도 한 열로 배치*/
-    form{
+    /* 과목 필터를 한 열로 배치 */
+    .subject-filter{
         flex-direction: column;
-        align-items: stretch;
-    }
-
-    input,
-    button{
-        width: 100%;
+        gap: 8px;
     }
 
     button{
         /*모바일에서도 버튼의 누르는 영역이 너무 낮아지지 않게 설정*/
         min-height: 48px;
-    }
-
-    /* 위의 button width:100% 때문에 탭 3개가 세로로 길게 쌓인다
-       auto 로 되돌려 자리가 되는 만큼 가로로 두고, 모자라면 줄바꿈되게 함 */
-    .tabs{
-        flex-direction: column;
-        align-items: stretch;       
-    }
-
-    .tab{
         width: 100%;
-        text-align: left;
     }
-}
 
-#submitMessage{
-     margin-top: 16px;
-     color: #555763;
-}
+    /* 탭은 가로 폭 100%로 늘리지 않고, 자리가 모자라면 줄바꿈되게 둡니다 */
+    .tab{
+        width: auto;
+    }
 
-#submitMessage.is-success{
-     color: #245c3a;
-     background-color: #e7f7ed;
-     padding: 12px;
-     border-radius: 10px;
-     font-weight:700;
-}
-
-#submitButton:disabled{
-     color: #ffffff;
-     background-color: #a8a8b2;
-     cursor: not-allowed;
+    #submitButton{
+        align-self: stretch;
+    }
 }

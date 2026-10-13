@@ -3,48 +3,8 @@ let isSubmit = false;             // 신청 여부 상태 > boolean
 let submitCount = 0;              // 제출 횟수 상태 > number
 
 
-/* ========== Contact 폼 (submit 이벤트) ========== */
-// 함수 호출 전달 받음 (email, subscribe)
-function makeSubmitMessage(email, subscribe) {
-    if (subscribe == true) {
-        return email + "로 신청이 완료 되었습니다.";
-    }
+/* ========== 테마 전환 (click 이벤트) ========== */
 
-    return "이메일을 입력한 뒤 신청해 주세요.";
-}
-
-const contactForm = document.querySelector("#contact-form");
-const emailInput = document.querySelector("#email");
-const submitButton = document.querySelector("#submitButton");
-const submitMessage = document.querySelector("#submitMessage");
-
-function handleSubmit(event) {
-    event.preventDefault();           // 폼 제출 기본 동작 방지
-
-    const submitEmail = emailInput.value.trim();           // 이메일 입력값 가져오기
-    if (submitEmail === "") {
-        submitMessage.textContent =
-            "이메일을 입력한 뒤 신청해주세요.";
-        emailInput.focus();
-        return;
-    }
-
-    isSubmit = true;
-    submitCount += 1;
-
-    submitMessage.textContent =
-        makeSubmitMessage(submitEmail, isSubmit);
-
-    submitMessage.classList.add("is-success");
-
-    submitButton.textContent = "신청완료";
-    submitButton.disabled = true;
-}
-
-contactForm.addEventListener("submit", handleSubmit);
-
-
-/* ========== 테마 (click 이벤트) ========== */
 const themeButton = document.querySelector("#themeButton");
 
 function handleThemeClick() {
@@ -55,22 +15,48 @@ function handleThemeClick() {
 themeButton.addEventListener("click", handleThemeClick);
 
 
-/* ========== 방문자 인사 (input 이벤트) ========== */
-const nicknameInput = document.querySelector("#nickname");
-const nicknameCount = document.querySelector("#nicknameCount");
+/* ========== 주요 기능 탭 (click 이벤트) ========== */
 
-function handleNicknameInput() {
-    const maxLength = nicknameInput.maxLength;
-    const currentLength = nicknameInput.value.length;
+const tabs = document.querySelectorAll(".tab");
+const panels = document.querySelectorAll(".panel");
 
-    nicknameCount.textContent = currentLength + " / " + maxLength;
+// 모든 탭과 패널을 비활성 상태로 되돌림
+function resetTabsAndPanels() {
+    tabs.forEach(function (tab) {
+        tab.classList.remove("is-active");
+        tab.setAttribute("aria-selected", "false");
+    });
+
+    panels.forEach(function (panel) {
+        panel.classList.remove("is-active");
+        panel.hidden = true;
+    });
 }
 
-nicknameInput.addEventListener("input", handleNicknameInput);
+// 전달받은 탭과 연결된 패널만 활성화
+function activateTab(clickedTab) {
+    const targetSelector = clickedTab.dataset.target;
+    const targetPanel = document.querySelector(targetSelector);
 
+    clickedTab.classList.add("is-active");
+    clickedTab.setAttribute("aria-selected", "true");
+
+    targetPanel.classList.add("is-active");
+    targetPanel.hidden = false;
+}
+
+function handleTabClick(event) {
+    resetTabsAndPanels();              // 기존 선택 해제
+    activateTab(event.currentTarget);  // 클릭한 탭만 켜기
+}
+
+tabs.forEach(function (tab) {
+    tab.addEventListener("click", handleTabClick);
+});
 
 
 /* ========== 학습 과목 필터 (change 이벤트) ========== */
+
 const checkAll = document.querySelector("#checkAll");
 const subjectChecks = document.querySelectorAll(".subject-check");
 const subjectCards = document.querySelectorAll("[data-subject]");
@@ -110,7 +96,7 @@ function handleCheckAll() {
         check.checked = checkAll.checked;
     });
 
-    applyFilter(); //JS로 바꾼 값은 change가 발생하지 않으므로 직접 호출
+    applyFilter(); // JS로 바꾼 값은 change가 발생하지 않으므로 직접 호출
 }
 
 // 개별 체크 > 전부 켜졌을 때만 전체 체크도 켜짐
@@ -131,42 +117,82 @@ subjectChecks.forEach(function (check) {
 applyFilter(); // 페이지가 열릴 때 한 번 실행해 초기 상태를 맞춤
 
 
-/* ========== 주요 기능 탭 (click 이벤트) ========== */
-const tabs = document.querySelectorAll(".tab");
-const panels = document.querySelectorAll(".panel");
+/* ========== 방문자 인사 (input 이벤트) ========== */
 
-function resetTabsAndPanels() {
-    // 1. 모든 탭을 비활성 상태로 되돌림
-    tabs.forEach(function (tab) {
-        tab.classList.remove("is-active");
-        tab.setAttribute("aria-selected", "false");
-    });
+const visitorName = document.querySelector("#visitorName");
+const greeting = document.querySelector("#greeting");
 
-    // 2. 모든 패널을 숨김
-    panels.forEach(function (panel) {
-        panel.classList.remove("is-active");
-        panel.hidden = true;
-    });
+function handleVisitorInput() {
+    const name = visitorName.value.trim();
+
+    if (name === "") {
+        greeting.textContent = "방문해주셔서 감사합니다.";
+        return;
+    }
+
+    greeting.textContent = "안녕하세요, " + name + "님! 편하게 문의 남겨주세요.";
 }
 
-function activateTab(clickedTab){
-    const targetSelector = clickedTab.dataset.target;
-    const targetPanel = document.querySelector(targetSelector);
+visitorName.addEventListener("input", handleVisitorInput);
 
-    // 3. 클릭한 탭만 활성화
-    clickedTab.classList.add("is-active");
-    clickedTab.setAttribute("aria-selected", "true");
 
-    //4. 연결된 패널만 표시 (data-target 값이 "#feature-subjects" 형태)
-    targetPanel.classList.add("is-active");
-    targetPanel.hidden = false;
+/* ========== 문의 유형 안내 (change 이벤트) ========== */
+
+const inquiryType = document.querySelector("#inquiryType");
+const inquiryGuide = document.querySelector("#inquiryGuide");
+
+function handleInquiryChange() {
+    const type = inquiryType.value;
+
+    if (type === "collab") {
+        inquiryGuide.textContent = "프로젝트 기간과 작업 범위를 함께 적어주세요.";
+    } else if (type === "work") {
+        inquiryGuide.textContent = "원하는 작업물의 종류와 일정을 적어주세요.";
+    } else {
+        inquiryGuide.textContent = "자유롭게 내용을 남겨주세요.";
+    }
 }
 
-function handleTabClick(event) {
-    resetTabsAndPanels();   //기존선택 해제
-    activateTab(event.currentTarget);
+inquiryType.addEventListener("change", handleInquiryChange);
+
+
+/* ========== Contact 폼 제출 (submit 이벤트) ========== */
+
+// 함수 호출 전달 받음 (email, subscribe)
+function makeSubmitMessage(email, subscribe) {
+    if (subscribe == true) {
+        return email + "로 신청이 완료 되었습니다.";
+    }
+
+    return "이메일을 입력한 뒤 신청해 주세요.";
 }
 
-tabs.forEach(function (tab) {
-    tab.addEventListener("click", handleTabClick);
-});
+const contactForm = document.querySelector("#contact-form");
+const emailInput = document.querySelector("#email");
+const submitButton = document.querySelector("#submitButton");
+const submitMessage = document.querySelector("#submitMessage");
+
+function handleSubmit(event) {
+    event.preventDefault();           // 폼 제출 기본 동작 방지
+
+    const submitEmail = emailInput.value.trim();           // 이메일 입력값 가져오기
+    if (submitEmail === "") {
+        submitMessage.textContent =
+            "이메일을 입력한 뒤 신청해주세요.";
+        emailInput.focus();
+        return;
+    }
+
+    isSubmit = true;
+    submitCount += 1;
+
+    submitMessage.textContent =
+        makeSubmitMessage(submitEmail, isSubmit);
+
+    submitMessage.classList.add("is-success");
+
+    submitButton.textContent = "신청완료";
+    submitButton.disabled = true;
+}
+
+contactForm.addEventListener("submit", handleSubmit);
