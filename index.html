@@ -48,9 +48,9 @@
         <img src="assets/images/profile.jpg" alt="SEONWON 프로필 이미지">
 
         <div class="about-text">
-          <p>안녕하세요. 저는 3D 환경 아티스트로 일하며 디지털 트윈, VR, 메타버스 콘텐츠를 만들어 왔습니다.</p>
-          <p>현재 3D 그래픽과 , AI를 활용하여 다양한 방법으로 제작 할 수 있는 배경 제작을 공부하고 있습니다.</p>
-          <p>작업은 3D 환경, 2D 일러스트, AI 영상 작업물로 나누어져 있습니다.</p>
+          <p>안녕하세요. 저는 3D 배경 디자이너로 일하며 디지털 트윈, VR, 메타버스 콘텐츠를 만들어 왔습니다.</p>
+          <p>현재 3D 배경 그래픽과, 프로그래밍, AI를 활용하여 다양한 방법으로 제작 할 수 있는 배경 제작을 공부하고 있습니다.</p>
+          <p>작업은 3D 그래픽, 2D 일러스트, AI 영상 작업물로 나누어져 있습니다.</p>
         </div>
       </div>
     </section>
@@ -61,26 +61,29 @@
 
       <!-- click 이벤트 : 탭 전환 -->
       <div class="tabs" role="tablist" aria-label="작업 분야 선택">
-        <button type="button" class="tab is-active" data-target="#field-3d" aria-selected="true">3D 환경</button>
+        <button type="button" class="tab is-active" data-target="#field-3d" aria-selected="true">3D 그래픽</button>
         <button type="button" class="tab" data-target="#field-illust" aria-selected="false">2D 일러스트</button>
         <button type="button" class="tab" data-target="#field-video" aria-selected="false">AI 영상</button>
       </div>
 
       <div id="field-3d" class="panel is-active">
-        <h3>3D 환경</h3>
-        <p>게임과 실시간 콘텐츠에 쓰이는 배경과 구조물을 만듭니다. 모듈러와 트림시트로 제작해 재사용과 수정이 쉬운 구조를 설계합니다.</p>
+        <h3>3D 그래픽</h3>
+        <p>게임과 실시간 콘텐츠에 쓰이는 배경과 구조물을 만듭니다.</p>
+        <p>모듈러와 트림시트로 제작해 재사용과 수정이 쉬운 구조를 설계합니다.</p>
         <p>디지털 트윈, VR, 메타버스 프로젝트를 주로 맡아 왔습니다.</p>
       </div>
 
       <div id="field-illust" class="panel" hidden>
         <h3>2D 일러스트</h3>
-        <p>동물을 주제로 한 드로잉과 굿즈 디자인 작업을 합니다. 선 작업부터 채색, 스티커 디자인을 다룹니다.</p>
+        <p>동물을 주제로 한 드로잉과 굿즈 디자인 작업을 합니다.</p>
+        <p>드로잉과 일러스트 작업으로 스티커와 엽서 등의 굿즈를 제작중 입니다.</p>
         <p>무념무개라는 이름으로 작업을 올리고 있습니다.</p>
       </div>
 
       <div id="field-video" class="panel" hidden>
         <h3>AI 영상</h3>
-        <p>AI 도구를 활용해 짧은 영상을 만듭니다. 장면의 분위기와 연출을 직접 설계하고 다듬는 과정을 거칩니다.</p>
+        <p>AI 도구를 활용해 짧은 영상을 만듭니다.</p>
+        <p>장면의 분위기와 연출을 직접 설계하고 다듬는 과정을 거칩니다.</p>
         <p>수묵화, 회화풍 배경 등 그림 질감을 살린 연출을 실험하고 있습니다.</p>
       </div>
     </section>
@@ -98,7 +101,7 @@
 
         <label class="checkrow">
           <input type="checkbox" class="category-check" value="3d" checked>
-          3D 환경
+          3D 그래픽
         </label>
 
         <label class="checkrow">
@@ -118,41 +121,151 @@
       <ul id="workGrid" class="work-grid"></ul>
     </section>
 
-    <!-- 연락처 -->
+    <!--
+      연락처 : 4단계 문의 흐름
+      사용자 목표 : 협업·작업 문의를 남긴다
+      핵심 행동 : 유형·분야 선택 > 연락 정보 입력 > 내용 확인 후 제출
+      완료 조건 : 3단계에서 제출하면 4단계 완료 화면이 표시된다
+      단계 : 1 선택 > 2 입력 > 3 확인 > 4 완료 (script.js의 showStep()로 전환)
+    -->
     <section id="contact" class="contact-card">
       <h2>Contact</h2>
 
       <!-- input 이벤트의 결과가 표시되는 자리 -->
       <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
 
-      <form id="contact-form">
-        <!-- input 이벤트 : 이름 입력 -->
-        <label for="visitorName">이름</label>
-        <input type="text" id="visitorName" name="visitorName" maxlength="10">
+      <!-- 진행 상태 : showStep()이 갱신 -->
+      <p id="stepStatus" aria-live="polite">1 / 4 단계 · 문의 유형</p>
 
-        <label for="email">Email</label>
-        <input type="email" id="email" name="email">
+      <!-- novalidate : 브라우저 기본 검사 대신 script.js가 직접 검사하고 안내 -->
+      <form id="contact-form" novalidate>
 
-        <!-- change 이벤트 : 문의 유형 선택 -->
-        <label for="inquiryType">문의 유형</label>
-        <select id="inquiryType" name="inquiryType">
-          <option value="collab">협업 문의</option>
-          <option value="work">작업 문의</option>
-          <option value="etc">기타</option>
-        </select>
+        <!-- 1단계 : 선택 -->
+        <div class="step-panel" data-step="1">
+          <h3 tabindex="-1">문의 유형과 관심 분야</h3>
 
-        <p id="inquiryGuide" aria-live="polite">프로젝트 기간과 작업 범위를 함께 적어주세요.</p>
+          <div class="field">
+            <!-- change 이벤트 : 문의 유형 선택 -->
+            <label for="inquiryType">문의 유형 <span class="required">(필수)</span></label>
+            <select id="inquiryType" name="inquiryType" aria-required="true">
+              <option value="">선택해 주세요</option>
+              <option value="collab">협업 문의</option>
+              <option value="work">작업 문의</option>
+              <option value="etc">기타</option>
+            </select>
+            <p class="field-error" hidden></p>
+          </div>
 
-        <label for="message">Message</label>
-        <textarea id="message" name="message"></textarea>
+          <p id="inquiryGuide" aria-live="polite">문의 유형을 고르면 작성 안내가 표시됩니다.</p>
 
-        <button id="submitButton" type="submit">Send</button>
+          <div class="field" role="group" aria-labelledby="interestLabel">
+            <div id="interestLabel" class="field-label">관심 분야 <span class="required">(필수, 1개 이상)</span></div>
+
+            <div class="work-filter">
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="3d">
+                3D 그래픽
+              </label>
+
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="illust">
+                2D 일러스트
+              </label>
+
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="video">
+                AI 영상
+              </label>
+            </div>
+            <p class="field-error" hidden></p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="next-button">다음</button>
+          </div>
+        </div>
+
+        <!-- 2단계 : 입력 -->
+        <div class="step-panel" data-step="2" hidden>
+          <h3 tabindex="-1">연락 정보와 문의 내용</h3>
+
+          <div class="field">
+            <!-- input 이벤트 : 이름 입력 -->
+            <label for="visitorName">이름 <span class="required">(필수)</span></label>
+            <input type="text" id="visitorName" name="visitorName" maxlength="10" autocomplete="name" aria-required="true">
+            <p class="field-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="email">Email <span class="required">(필수)</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true">
+            <p class="field-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="message">Message <span class="required">(필수)</span></label>
+            <textarea id="message" name="message" aria-required="true"></textarea>
+            <p class="field-error" hidden></p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="prev-button">이전</button>
+            <button type="button" class="next-button">다음</button>
+          </div>
+        </div>
+
+        <!-- 3단계 : 확인 (입력값은 script.js가 채웁니다) -->
+        <div class="step-panel" data-step="3" hidden>
+          <h3 tabindex="-1">입력 내용 확인</h3>
+          <p>내용을 확인하고 제출해 주세요. 고칠 항목은 수정 버튼으로 돌아갈 수 있습니다.</p>
+
+          <ul class="summary">
+            <li class="summary-row">
+              <span class="summary-label">문의 유형</span>
+              <span class="summary-value" id="sumType"></span>
+              <button type="button" class="edit-button" data-goto="1" aria-label="문의 유형 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">관심 분야</span>
+              <span class="summary-value" id="sumInterests"></span>
+              <button type="button" class="edit-button" data-goto="1" aria-label="관심 분야 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">이름</span>
+              <span class="summary-value" id="sumName"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="이름 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">Email</span>
+              <span class="summary-value" id="sumEmail"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="이메일 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">Message</span>
+              <span class="summary-value" id="sumMessage"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="메시지 수정">수정</button>
+            </li>
+          </ul>
+
+          <div class="step-actions">
+            <button type="button" class="prev-button">이전</button>
+            <button id="submitButton" type="submit">제출하기</button>
+          </div>
+        </div>
+
+        <!-- 4단계 : 완료 -->
+        <div class="step-panel" data-step="4" hidden>
+          <h3 tabindex="-1">작성이 완료되었습니다</h3>
+
+          <!-- 완료 메시지 : 제출할 때 script.js가 채웁니다 -->
+          <p id="submitMessage"></p>
+
+          <div class="step-actions">
+            <button id="restartButton" type="button">새 문의 작성</button>
+          </div>
+        </div>
+
       </form>
-
-      <!-- 제출 후 메시지 표시 -->
-      <p id="submitMessage" aria-live="polite">
-        이메일과 메시지를 입력하고 보내주세요.
-      </p>
     </section>
 
   </main>

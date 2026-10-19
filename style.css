@@ -21,6 +21,8 @@
     --success-bg: #e3f5e6;
 
     --disabled-bg: #a8b5aa;
+
+    --error: #b3261e;         /* 입력 오류 문구와 테두리 */
 }
 
 /* 다크 모드는 위 변수의 값만 바꿔치기. */
@@ -45,6 +47,8 @@ body.dark{
     --success-bg: #2f4433;
 
     --disabled-bg: #4f584f;
+
+    --error: #ff9a8f;
 
     --accent: #eba421;        /* 다크 모드에서만 쓰는 강조색 (선택된 탭) */
 }
@@ -98,7 +102,6 @@ body.modal-open{
     overflow: hidden;
 }
 
-
 /* ===== 헤더 ===== */
 
 .header-row{
@@ -134,7 +137,7 @@ nav a:hover{
 }
 
 
-/* ===== 글자 ===== */
+/* ===== 제목 ===== */
 
 h1{
     font-size: 72px;
@@ -226,12 +229,12 @@ button{
     font: inherit;
 }
 
-/* hover는 기본색과 달라야 반응이 보입니다 */
+/* hover는 기본색과 달라야함. */
 button:hover {
     background-color: var(--green-dark);
 }
 
-/* 포커스 테두리는 배경색과 확실히 달라야 합니다.
+/* 포커스 테두리는 배경색과 확실히 다르게 표현.
    키보드만 쓰는 사람에게는 지금 위치를 알려주는 유일한 표시입니다 */
 button:focus,
 input:focus,
@@ -245,8 +248,7 @@ button:active {
     transform: translateY(1px);
 }
 
-/* 테마 버튼 : 보조 기능이라 외곽선만
-   위의 button 규칙을 덮어써야 하므로 반드시 아래쪽에 둡니다 */
+/* 테마 버튼 : 보조 기능이라 외곽선만 위 button 규칙을 덮어써야 하므로 반드시 아래쪽에 배치. */
 #themeButton{
     flex: 0 0 auto;
     padding: 8px 14px;
@@ -282,14 +284,12 @@ body.dark #themeButton:hover{
 .tab {
     padding: 12px 20px;
 
-    /* 기본 테두리는 연하게 둬야 선택됐을 때 차이가 보입니다 */
     border: 2px solid var(--border);
 
     border-radius: 10px;
     color: var(--text-soft);
     background-color: var(--surface);
 
-    /* 기본은 가볍게 둬야 선택됐을 때 굵기 차이가 보입니다 */
     font-weight: 500;
     text-decoration: none;
 
@@ -300,8 +300,7 @@ body.dark #themeButton:hover{
     background-color: var(--surface-soft);
 }
 
-/* 선택된 탭 : 색 + 굵기 + 밑줄 세 가지로 표시
-   색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없습니다 */
+/* 선택된 탭 : 색 + 굵기 + 밑줄 세 가지로 표시. 색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없다. */
 .tab.is-active {
     color: var(--green-dark);
     border-color: var(--green);
@@ -311,8 +310,6 @@ body.dark #themeButton:hover{
     text-underline-offset: 5px;
 }
 
-/* 다크 모드에서는 주황을 강조색으로 씁니다.
-   밝은 바탕에는 어두운 글자를 올려야 읽힙니다 */
 body.dark .tab.is-active{
     color: var(--bg);
     border-color: var(--accent);
@@ -346,7 +343,7 @@ body.dark .tab.is-active{
     gap: 8px;
 }
 
-/* 체크박스는 글자 옆에 작게 두어야 하므로 너비를 되돌립니다 */
+/* 체크박스는 글자 옆에 작게 두어야 하므로 너비를 되돌림. */
 .checkrow input[type="checkbox"]{
     width: auto;
     flex: 0 0 auto;
@@ -375,7 +372,7 @@ body.dark .tab.is-active{
     min-width: 0;
 }
 
-/* 카드 전체를 버튼으로 만들어 키보드로도 열 수 있게 합니다 */
+/* 카드 전체를 버튼으로 만들어 키보드로도 열 수 있도록 추가. */
 .work-button{
     display: block;
     width: 100%;
@@ -401,10 +398,8 @@ body.dark .tab.is-active{
     position: relative;
     display: block;
 
-    /* 썸네일을 정사각형으로 고정해 그리드를 가지런하게 만듭니다 */
     aspect-ratio: 1 / 1;
 
-    /* 흰 배경 일러스트가 떠 보이지 않도록 항상 흰 바탕을 깔아 둡니다 */
     background-color: #ffffff;
 }
 
@@ -428,7 +423,6 @@ body.dark .tab.is-active{
     background-color: rgba(0, 0, 0, 0.55);
 }
 
-/* 삼각형은 테두리를 이용해 그립니다 */
 .play-icon::after{
     content: "";
     position: absolute;
@@ -475,7 +469,7 @@ body.dark .tab.is-active{
     padding: 24px;
 }
 
-/* hidden 속성이 붙으면 display:flex 때문에 안 숨겨지므로 따로 지정합니다 */
+/* hidden 속성이 붙으면 display:flex 때문에 안 숨겨지므로 따로 지정. */
 .modal[hidden]{
     display: none;
 }
@@ -533,7 +527,6 @@ body.dark .tab.is-active{
     display: block;
     width: 100%;
 
-    /* 영상은 가로로 긴 비율이 기본입니다 */
     aspect-ratio: 16 / 9;
     border: 0;
 }
@@ -560,7 +553,7 @@ body.dark .tab.is-active{
     border-radius: 12px;
 }
 
-/* 입력 항목이 여러 개이므로 세로로 배치합니다 */
+/* 입력 항목이 여러 개이므로 세로 정렬. */
 form {
     display: flex;
     flex-direction: column;
@@ -574,7 +567,7 @@ form label{
 }
 
 #submitButton{
-    /* 버튼만 내용 너비로 두어 폼이 답답해 보이지 않게 합니다 */
+    /* 버튼만 내용 너비로 두어 폼이 답답해 보이지 않게 한다. */
     align-self: flex-start;
     margin-top: 8px;
 }
@@ -607,6 +600,144 @@ form label{
      color: #ffffff;
      background-color: var(--disabled-bg);
      cursor: not-allowed;
+}
+
+
+/* ===== Contact 4단계 흐름 ===== */
+
+.step-panel{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* hidden 속성이 display:flex 때문에 무시되지 않도록 따로 지정. */
+.step-panel[hidden]{
+    display: none;
+}
+
+.step-panel h3{
+    margin: 0;
+}
+
+/* 단계가 바뀔 때 제목으로 포커스를 옮기므로, 제목에는 테두리를 그리지 않는다 */
+.step-panel h3:focus{
+    outline: none;
+}
+
+#stepStatus{
+    margin: 0 0 16px;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+/* 입력 칸 하나 : 라벨 + 입력 + 오류 문구 */
+.field{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* 체크박스 묶음의 제목. form label과 같은 모양. */
+.field-label{
+    font-weight: 700;
+    margin-bottom: -4px;
+}
+
+/* form label 규칙이 체크박스 글자까지 굵게 만들지 않도록 되돌림. */
+form .checkrow{
+    font-weight: 400;
+    margin-bottom: 0;
+}
+
+.required{
+    font-weight: 400;
+    font-size: 0.9em;
+    color: var(--text-soft);
+}
+
+/* 오류 문구 */
+.field-error{
+    margin: -4px 0 0;
+    font-size: 0.95em;
+    font-weight: 700;
+    color: var(--error);
+}
+
+/* 오류 표시 */
+.field-error::before{
+    content: "⚠ ";
+}
+
+[aria-invalid="true"]{
+    border-color: var(--error);
+    box-shadow: 0 0 0 1px var(--error);
+}
+
+/* 이전 / 다음 / 제출 버튼 묶음 */
+.step-actions{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 8px;
+}
+
+.step-actions #submitButton{
+    margin-top: 0;
+}
+
+/* 이전, 수정 : 보조 버튼이라 외곽선만, 위 button 규칙을 덮어써야 하므로 아래쪽에 배치. */
+.prev-button,
+.edit-button{
+    color: var(--text-soft);
+    background-color: transparent;
+    border: 1px solid var(--border);
+}
+
+.prev-button:hover,
+.edit-button:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+body.dark .prev-button:hover,
+body.dark .edit-button:hover{
+    color: var(--bg);
+    background-color: var(--accent);
+}
+
+/* 3단계 확인 목록 */
+.summary{
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+}
+
+.summary-row{
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border-soft);
+}
+
+.summary-label{
+    flex: 0 0 6em;
+    font-weight: 700;
+}
+
+.summary-value{
+    flex: 1;
+    min-width: 0;
+    color: var(--text);
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+}
+
+.edit-button{
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    font-size: 0.9em;
 }
 
 
@@ -692,6 +823,27 @@ form label{
 
     .modal-box{
         padding: 20px;
+    }
+
+    /* 확인 목록 : 제목과 수정 버튼은 윗줄, 내용은 아랫줄 */
+    .summary-row{
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .summary-label{
+        flex: 1;
+    }
+
+    .summary-value{
+        order: 3;
+        flex: 1 0 100%;
+    }
+
+    /* 수정 버튼은 가로로 늘리지 않되, 누르는 영역은 확보 */
+    .edit-button{
+        width: auto;
+        min-height: 44px;
     }
 
     /* 좁은 화면에서는 프로필과 글을 위아래로 배치 */
