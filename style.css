@@ -1,33 +1,76 @@
+/* ===== 색 팔레트 ===== */
+
+:root{
+    --bg: #fffdeb;            /* 페이지 배경 (크림) */
+    --surface: #ffffff;       /* 카드, 모달 바탕 */
+    --surface-soft: #f3fff1;  /* 패널, 연한 강조 바탕 */
+
+    --text: #292a31;          /* 본문 글자 */
+    --text-soft: #556357;     /* 설명문, 보조 글자 */
+
+    --border: #c1cfc4;        /* 일반 테두리 */
+    --border-soft: #dfe7e0;   /* 약한 구분선 */
+
+    --green: #276938;         /* 메인 포인트 */
+    --green-dark: #185527;    /* 제목, hover */
+    --green-deep: #05460a;    /* 가장 진한 초록 */
+
+    --focus: #5a9c6b;         /* 포커스 테두리 (배경과 확실히 달라야 함) */
+
+    --success-text: #185527;
+    --success-bg: #e3f5e6;
+
+    --disabled-bg: #a8b5aa;
+}
+
+/* 다크 모드는 위 변수의 값만 바꿔치기. */
+body.dark{
+    --bg: #21271f;
+    --surface: #2e332e;
+    --surface-soft: #333a33;
+
+    --text: #f3e7ce;
+    --text-soft: #b6c2b5;
+
+    --border: #4f584f;
+    --border-soft: #3c443c;
+
+    --green: #8cc47e;
+    --green-dark: #a8d69b;
+    --green-deep: #8cc47e;
+
+    --focus: #c4b77e;
+
+    --success-text: #d7f0d9;
+    --success-bg: #2f4433;
+
+    --disabled-bg: #4f584f;
+
+    --accent: #eba421;        /* 다크 모드에서만 쓰는 강조색 (선택된 탭) */
+}
+
+
 body{
-    color: #292a31;
+    color: var(--text);
     font-family: 'Noto Sans KR', sans-serif;
     font-size: 18px;
     line-height: 1.6;
     margin: 0;
-    background-color: #fbfaff;
+    background-color: var(--bg);
 }
 
 header,
 main,
 footer{
-    /* 좁은 화면에서는 사용가능한 너비에 맞춰 줄어듭니다. */
+    /* 좁은 화면에서는 사용가능한 너비에 맞춰 줄어듬. */
     width: 100%;
 
-    /* 넓은 화면에서도 콘텐츠는 1100px보다 커지지 않습니다. */
+    /* 넓은 화면에서도 콘텐츠는 1100px보다 커지지 않음. */
     max-width: 1100px;
 
     margin: 0 auto;
     padding-left: 24px;
     padding-right: 24px;
-}
-
-img{
-    display: block;
-    width: 30%;
-    max-width: 720px;
-    height: auto;
-    margin: 20px auto;
-    border-radius: 16px;
 }
 
 header{
@@ -50,7 +93,14 @@ footer{
     box-sizing: border-box;
 }
 
-/* ===== 헤더 : 메뉴와 테마 버튼을 한 줄에 배치 ===== */
+/* 모달이 열려 있는 동안 뒷배경이 스크롤되지 않게 */
+body.modal-open{
+    overflow: hidden;
+}
+
+
+/* ===== 헤더 ===== */
+
 .header-row{
     display: flex;
     flex-wrap: wrap;
@@ -74,9 +124,13 @@ nav{
 }
 
 nav a {
-    color: #5b5870;
+    color: var(--text-soft);
     font-weight: 700;
     text-decoration: none;
+}
+
+nav a:hover{
+    color: var(--green-dark);
 }
 
 
@@ -86,11 +140,12 @@ h1{
     font-size: 72px;
     font-weight: 1000;
     line-height: 1.2;
-    letter-spacing: -0.02em;
+    letter-spacing: 0.02em;
+    margin: 0 0 16px;
 }
 
 h2{
-    color: #635bff;
+    color: var(--green-dark);
     font-size: 32px;
     font-weight: 800;
     line-height: 1.3;
@@ -103,8 +158,35 @@ h3{
 }
 
 p{
-    color: #555763;
+    color: var(--text-soft);
     line-height: 1.7;
+}
+
+
+/* ===== 소개 프로필 이미지 ===== */
+
+.about-row{
+    display: flex;
+    align-items: flex-start;   /* 위쪽 선을 맞춤 */
+    gap: 32px;
+    margin-top: 24px;
+}
+
+#about img{
+    display: block;
+    width: 160px;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 5px solid var(--green-deep);
+
+    /* 글이 길어져도 이미지가 찌그러지지 않게 고정 */
+    flex: 0 0 auto;
+    margin: 0;
+}
+
+.about-text p:first-child{
+    margin-mid: 0;
 }
 
 
@@ -116,7 +198,9 @@ textarea{
     width: 100%;
     min-width: 0;
     padding: 12px;
-    border: 1px solid #b8b7c5;
+    color: var(--text);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 10px;
 }
 
@@ -130,7 +214,7 @@ button {
     border: none;
     border-radius: 10px;
     color: #ffffff;
-    background-color: #635bff;
+    background-color: var(--green);
     cursor: pointer;
     transition: background-color 0.2s, transform 0.2s;
 }
@@ -142,15 +226,18 @@ button{
     font: inherit;
 }
 
+/* hover는 기본색과 달라야 반응이 보입니다 */
 button:hover {
-    background-color: #4137ca;
+    background-color: var(--green-dark);
 }
 
+/* 포커스 테두리는 배경색과 확실히 달라야 합니다.
+   키보드만 쓰는 사람에게는 지금 위치를 알려주는 유일한 표시입니다 */
 button:focus,
 input:focus,
 select:focus,
 textarea:focus{
-    outline: 3px solid #b3affc;
+    outline: 3px solid var(--focus);
     outline-offset: 2px;
 }
 
@@ -158,11 +245,29 @@ button:active {
     transform: translateY(1px);
 }
 
+/* 테마 버튼 : 보조 기능이라 외곽선만
+   위의 button 규칙을 덮어써야 하므로 반드시 아래쪽에 둡니다 */
+#themeButton{
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 0.9em;
+    color: var(--text-soft);
+    background-color: transparent;
+    border: 1px solid var(--border);
+}
 
-/* ===== 주요 기능 탭 =====
-   위의 button 규칙(보라 배경 + 흰 글씨)을 덮어써야 하므로
-   반드시 button 규칙 "아래쪽"에 작성합니다.
-   우선순위가 같을 때는 나중에 쓴 규칙이 이깁니다.          */
+#themeButton:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+body.dark #themeButton:hover{
+    color: var(--bg);
+    background-color: var(--accent);
+}
+
+
+/* ===== 작업 분야 탭 ===== */
 
 .tabs {
     display: flex;
@@ -176,10 +281,13 @@ button:active {
 
 .tab {
     padding: 12px 20px;
-    border: 2px solid #deddea;
+
+    /* 기본 테두리는 연하게 둬야 선택됐을 때 차이가 보입니다 */
+    border: 2px solid var(--border);
+
     border-radius: 10px;
-    color: #5b5870;
-    background-color: #ffffff;
+    color: var(--text-soft);
+    background-color: var(--surface);
 
     /* 기본은 가볍게 둬야 선택됐을 때 굵기 차이가 보입니다 */
     font-weight: 500;
@@ -189,31 +297,43 @@ button:active {
 }
 
 .tab:hover {
-    background-color: #f4f3ff;
+    background-color: var(--surface-soft);
 }
 
 /* 선택된 탭 : 색 + 굵기 + 밑줄 세 가지로 표시
    색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없습니다 */
 .tab.is-active {
-color: #635bff;
-    border-color: #635bff;
-    background-color: #f4f3ff;
-    font-weight: 800;                /* 굵기 */
-    text-decoration: underline;      /* 밑줄 */
-        text-underline-offset: 4px;      /* 받침과 밑줄이 겹치지 않게 띄움 */
+    color: var(--green-dark);
+    border-color: var(--green);
+    background-color: var(--surface-soft);
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+}
+
+/* 다크 모드에서는 주황을 강조색으로 씁니다.
+   밝은 바탕에는 어두운 글자를 올려야 읽힙니다 */
+body.dark .tab.is-active{
+    color: var(--bg);
+    border-color: var(--accent);
+    background-color: var(--accent);
 }
 
 .panel {
     padding: 24px;
-    border: 1px solid #deddea;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background-color: #f4f3ff;
+    background-color: var(--surface-soft);
+}
+
+.panel h3{
+    margin-top: 0;
 }
 
 
-/* ===== 학습 과목 : 필터와 카드 ===== */
+/* ===== 작업물 필터 ===== */
 
-.subject-filter{
+.work-filter{
     display: flex;
     flex-wrap: wrap;
     gap: 16px;
@@ -230,6 +350,7 @@ color: #635bff;
 .checkrow input[type="checkbox"]{
     width: auto;
     flex: 0 0 auto;
+    accent-color: var(--green);
 }
 
 #filterStatus{
@@ -237,27 +358,195 @@ color: #635bff;
     margin-bottom: 24px;
 }
 
-.subjects-list {
+
+/* ===== 작업물 그리드 ===== */
+
+.work-grid{
     list-style-type: none;
     padding-left: 0;
     margin: 0;
 
     display: grid;
-
-    /*들어갈 수 있는 만큼 열을 만들고,
-    카드너비는 최소 260px부터 남은 공간까지 사용*/
-    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 24px;
 }
 
-.subjects-card {
+.work-card{
     min-width: 0;
-    padding: 20px 24px;
-    margin-bottom: 0px;
-    border: 1px solid #deddea;
+}
+
+/* 카드 전체를 버튼으로 만들어 키보드로도 열 수 있게 합니다 */
+.work-button{
+    display: block;
+    width: 100%;
+    padding: 0;
+    border: 1px solid var(--border);
     border-radius: 12px;
-    background-color: #f4f3ff;
+    background-color: var(--surface);
+    overflow: hidden;
+    text-align: left;
+    color: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s, transform 0.2s;
+}
+
+/* hover 시 테두리가 진해져야 반응이 보입니다 */
+.work-button:hover{
+    border-color: var(--green);
+    background-color: var(--surface);
+    transform: translateY(-2px);
+}
+
+.work-thumb{
+    position: relative;
+    display: block;
+
+    /* 썸네일을 정사각형으로 고정해 그리드를 가지런하게 만듭니다 */
+    aspect-ratio: 1 / 1;
+
+    /* 흰 배경 일러스트가 떠 보이지 않도록 항상 흰 바탕을 깔아 둡니다 */
+    background-color: #ffffff;
+}
+
+.work-thumb img{
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* 영상 카드에만 올라가는 재생 아이콘 */
+.play-icon{
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background-color: rgba(0, 0, 0, 0.55);
+}
+
+/* 삼각형은 테두리를 이용해 그립니다 */
+.play-icon::after{
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 54%;
+    transform: translate(-50%, -50%);
+
+    border-style: solid;
+    border-width: 10px 0 10px 16px;
+    border-color: transparent transparent transparent #ffffff;
+}
+
+.work-info{
+    display: block;
+    padding: 16px;
+
+    /* 흰 카드 위에서도 보이는 농도여야 구분선 역할을 합니다 */
+    border-top: 1px solid var(--border-soft);
+}
+
+.work-title{
+    display: block;
+    font-weight: 700;
+}
+
+.work-category{
+    display: block;
+    margin-top: 5px;
+    font-size: 0.85em;
+    color: var(--green);
+}
+
+
+/* ===== 작업물 상세 모달 ===== */
+
+.modal{
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+/* hidden 속성이 붙으면 display:flex 때문에 안 숨겨지므로 따로 지정합니다 */
+.modal[hidden]{
+    display: none;
+}
+
+.modal-overlay{
+    position: absolute;
+    inset: 0;
+    background-color: rgba(22, 28, 22, 0.72);
+}
+
+.modal-box{
+    position: relative;
+    width: 100%;
+    max-width: 720px;
+    max-height: 90vh;
+    overflow-y: auto;
+
+    padding: 24px;
+    border-radius: 16px;
+    background-color: var(--surface);
+}
+
+.modal-close{
+    position: absolute;
+    top: 16px;
+    right: 16px;
+
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+    color: var(--text-soft);
+    background-color: var(--surface);
+    border: 1px solid var(--border);
+}
+
+.modal-close:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+.modal-media{
+    border-radius: 12px;
+    overflow: hidden;
+    background-color: #ffffff;
+}
+
+.modal-media img{
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+.modal-media iframe{
+    display: block;
+    width: 100%;
+
+    /* 영상은 가로로 긴 비율이 기본입니다 */
+    aspect-ratio: 16 / 9;
+    border: 0;
+}
+
+.modal-box h3{
+    margin-bottom: 8px;
+}
+
+.modal-link{
+    display: inline-block;
+    margin-top: 8px;
+    color: var(--green);
+    font-weight: 700;
 }
 
 
@@ -266,8 +555,8 @@ color: #635bff;
 .contact-card {
     padding: 24px;
     margin-top: 32px;
-    background-color: #f4f3ff;
-    border: 1px solid #deddea;
+    background-color: var(--surface-soft);
+    border: 1px solid var(--border);
     border-radius: 12px;
 }
 
@@ -292,7 +581,7 @@ form label{
 
 #greeting{
     font-weight: 700;
-    color: #555763;
+    color: var(--green-dark);
     margin-top: 0;
 }
 
@@ -303,12 +592,12 @@ form label{
 
 #submitMessage{
      margin-top: 16px;
-     color: #555763;
+     color: var(--text-soft);
 }
 
 #submitMessage.is-success{
-     color: #245c3a;
-     background-color: #e7f7ed;
+     color: var(--success-text);
+     background-color: var(--success-bg);
      padding: 12px;
      border-radius: 10px;
      font-weight:700;
@@ -316,74 +605,8 @@ form label{
 
 #submitButton:disabled{
      color: #ffffff;
-     background-color: #a8a8b2;
+     background-color: var(--disabled-bg);
      cursor: not-allowed;
-}
-
-/* 테마 버튼 : 보조 기능이라 외곽선만 */
-#themeButton{
-    flex: 0 0 auto;
-    padding: 8px 14px;
-    font-size: 0.9em;
-    color: #ffffff;
-    background-color: #635bff;
-    border: 1px solid #deddea;
-}
-
-#themeButton:hover{
-    background-color: #f4f3ff;
-}
-
-body.dark #themeButton{
-    color: #b5b5c2;
-    border-color: #3a3a46;
-}
-
-body.dark #themeButton:hover{
-    background-color: #2f2f3d;
-}
-
-/* ===== 다크 모드 ===== */
-
-body.dark {
-  color: #e8e8ef;
-  background-color: #1a1a22;
-}
-
-body.dark p,
-body.dark nav a {
-  color: #b5b5c2;
-}
-
-body.dark .subjects-card,
-body.dark .contact-card,
-body.dark .panel {
-  background-color: #26262f;
-  border-color: #3a3a46;
-}
-
-body.dark .tab {
-    color: #b5b5c2;
-    border-color: #3a3a46;
-    background-color: #26262f;
-}
-
-body.dark .tab.is-active {
-    color: #b3affc;
-    border-color: #b3affc;
-    background-color: #2f2f3d;
-}
-
-body.dark input,
-body.dark select,
-body.dark textarea {
-    color: #e8e8ef;
-    background-color: #1f1f28;
-    border-color: #3a3a46;
-}
-
-body.dark #greeting {
-    color: #b3affc;
 }
 
 
@@ -410,10 +633,10 @@ body.dark #greeting {
         font-size: 28px;
     }
 
-    /* 메뉴와 테마 버튼을 위에서 아래로 배치 */
+    /* 설명문과 테마 버튼을 위에서 아래로 배치 */
     .header-row{
         flex-direction: column;
-        align-items: flex-start;   /* stretch → flex-start */
+        align-items: flex-start;
         gap: 8px;
     }
 
@@ -429,15 +652,15 @@ body.dark #greeting {
         padding: 8px 0;
     }
 
-    /*기능 카드를 한 열로 배치*/
-    .subjects-list {
-        grid-template-columns: 1fr;
-    }
-
-    /* 과목 필터를 한 열로 배치 */
-    .subject-filter{
+    /* 작업 분야 필터를 한 열로 배치 */
+    .work-filter{
         flex-direction: column;
         gap: 8px;
+    }
+
+    /* 작업 카드를 한 열로 배치 */
+    .work-grid{
+        grid-template-columns: 1fr;
     }
 
     button{
@@ -446,12 +669,34 @@ body.dark #greeting {
         width: 100%;
     }
 
-    /* 탭은 가로 폭 100%로 늘리지 않고, 자리가 모자라면 줄바꿈되게 둡니다 */
-    .tab{
+    /* 아래 버튼들은 가로로 늘리지 않습니다 */
+    .tab,
+    #themeButton,
+    .modal-close,
+    .work-button{
         width: auto;
+        min-height: auto;
+    }
+
+    .work-button{
+        width: 100%;
     }
 
     #submitButton{
         align-self: stretch;
+    }
+
+    .modal{
+        padding: 16px;
+    }
+
+    .modal-box{
+        padding: 20px;
+    }
+
+    /* 좁은 화면에서는 프로필과 글을 위아래로 배치 */
+    .about-row{
+        flex-direction: column;
+        gap: 16px;
     }
 }
