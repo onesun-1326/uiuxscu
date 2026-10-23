@@ -542,6 +542,11 @@ body.dark .tab.is-active{
     font-weight: 700;
 }
 
+/*모달안의 문의 버튼 : 링크 아래 줄에 따로 둠 */
+.modal-inquiry{
+    display: block;
+    margin-top: 16px;
+}
 
 /* ===== Contact ===== */
 
@@ -803,7 +808,6 @@ body.dark .edit-button:hover{
     /* 아래 버튼들은 가로로 늘리지 않습니다 */
     .tab,
     #themeButton,
-    .modal-close,
     .work-button{
         width: auto;
         min-height: auto;
@@ -811,6 +815,13 @@ body.dark .edit-button:hover{
 
     .work-button{
         width: 100%;
+    }
+
+    /*닫기버튼 동그라미를 유지하기 위함.*/
+    .modal-close{
+        width: 44px;
+        height: 44px;
+        min-height: 44px
     }
 
     #submitButton{

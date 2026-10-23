@@ -304,6 +304,17 @@ function handleKeydown(event) {
 
 document.addEventListener("keydown", handleKeydown);
 
+// 모달안의 "이작업으로 문의하기" :  모달을 닫고 contact로 이동
+const modalInquiryButton = document.querySelector("#modalInquiryButton");
+
+function handleModalInquiryClick(){
+  closeModal();
+
+  const contact = document.querySelector("#contact");
+  contact.scrollIntoView({ behavior: "smooth"});
+}
+
+modalInquiryButton.addEventListener("click", handleModalInquiryClick);
 
 /* ========== 방문자 인사 (input 이벤트) ========== */
 
