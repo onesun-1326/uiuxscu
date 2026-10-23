@@ -745,6 +745,59 @@ body.dark .edit-button:hover{
     font-size: 0.9em;
 }
 
+/* 작업물에서 이어진 문의 연결 표시 */
+.work-link{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    background-color: var(--surface);
+}
+
+/* hidden 속성이 display:flex 때문에 무시되지 않도록 따로 지정. */
+.work-link[hidden]{
+    display: none;
+}
+
+.work-link p{
+    margin: 0;
+    font-weight: 700;
+}
+
+/* 연결 해제 : 보조 버튼이라 외곽선만 */
+.unlink-button{
+    flex: 0 0 auto;
+    padding: 6px 14px;
+    font-size: 0.9em;
+    color: var(--text-soft);
+    background-color: transparent;
+    border: 1px solid var(--border);
+}
+
+.unlink-button:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+body.dark .unlink-button:hover{
+    color: var(--bg);
+    background-color: var(--accent);
+}
+
+/* 안내 문구 : 비어 있으면 자리를 차지하지 않음 */
+#linkStatus{
+    margin-bottom: 12px;
+    font-size: 0.9em;
+    color: var(--text-soft);
+}
+
+#linkStatus:empty{
+    display: none;
+}
 
 /* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
@@ -855,6 +908,12 @@ body.dark .edit-button:hover{
     .edit-button{
         width: auto;
         min-height: 44px;
+    }
+
+    /* 연결 표시 : 좁은 화면에서는 글 아래에 버튼 */
+    .work-link{
+        flex-direction: column;
+        align-items: stretch;
     }
 
     /* 좁은 화면에서는 프로필과 글을 위아래로 배치 */

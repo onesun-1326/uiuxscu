@@ -137,6 +137,13 @@
       <!-- 진행 상태 : showStep()이 갱신 -->
       <p id="stepStatus" aria-live="polite">1 / 4 단계 · 문의 유형</p>
 
+      <!--작업물에서 문의로 들어온경우 : 어떤 작업과 연결되어있는지 표시-->
+      <div id="workLink" class="work-link" hidden>
+        <p id="workLinkText"></p>
+        <button type="button" id="unlinkButton" class="unlink-button"> 연결해제 </button>
+      </div>
+      <p id="linkStatus" aria-live="polite"></p>
+      
       <!-- novalidate : 브라우저 기본 검사 대신 script.js가 직접 검사하고 안내 -->
       <form id="contact-form" novalidate>
 

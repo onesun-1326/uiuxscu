@@ -240,6 +240,8 @@ const modalTitle = document.querySelector("#modalTitle");
 const modalDesc = document.querySelector("#modalDesc");
 const modalLink = document.querySelector("#modalLink");
 
+let currentWork = null; //지금 모달에 열려있는 작업
+
 function openModal(work) {
   // 영상이면 플레이어를, 그 외에는 큰 이미지를 넣음
   if (work.category === "video") {
@@ -261,6 +263,8 @@ function openModal(work) {
 
   workModal.hidden = false;
   document.body.classList.add("modal-open"); // 뒷배경 스크롤 막기
+
+  currentWork = work;  //문의하기 버튼이 어떤작업인지 알 수 있도록 기억함.
 }
 
 function closeModal() {
@@ -308,10 +312,10 @@ document.addEventListener("keydown", handleKeydown);
 const modalInquiryButton = document.querySelector("#modalInquiryButton");
 
 function handleModalInquiryClick(){
-  closeModal();
+  const work = currentWork;  //모달을 닫기전에 어떤 작업이였는지 잡아둠.
 
-  const contact = document.querySelector("#contact");
-  contact.scrollIntoView({ behavior: "smooth"});
+  closeModal();
+  startInquiryFromWork(work);   //아래의 작업물에서 문의로 이어지는 블록함수
 }
 
 modalInquiryButton.addEventListener("click", handleModalInquiryClick);
@@ -385,6 +389,7 @@ const inquiry = {
   name: "",
   email: "",
   message: "",
+  relatedWork: null,   //문의와 연결된 작업. (없으면 null)
   isComplete: false
 };
 
@@ -673,6 +678,7 @@ function resetInquiry() {
   inquiry.email = "";
   inquiry.message = "";
   inquiry.isComplete = false;
+  inquiry.relatedWork = null;
   isSubmit = false;
 
   // 화면
@@ -683,11 +689,72 @@ function resetInquiry() {
   submitMessage.textContent = "";
   submitMessage.classList.remove("is-success");
 
+  renderWorkLink();
+  linkStatus.textContent = "";
+
   // 진행
   showStep(1);
   focusStepTitle(1);
 }
 
 document.querySelector("#restartButton").addEventListener("click", resetInquiry);
+
+
+/* ========== 작업물에서 문의로 이어지기 (click 이벤트) ========== */
+
+const workLink = document.querySelector("#workLink");
+const workLinkText = document.querySelector("#workLinkText");
+const linkStatus = document.querySelector("#linkStatus");
+const unlinkButton = document.querySelector("#unlinkButton");
+
+//연결된 작업이 있으면 표시줄을 보여주고, 없으면 숨기.
+function renderWorkLink() {
+  if (inquiry.relatedWork === null) {
+    workLink.hidden = true;
+    return;
+  }
+
+  workLinkText.textContent = "'" + inquiry.relatedWork.title + "' 작업을 보고 문의 하는 중입니다.";
+  workLink.hidden = false;
+}
+
+// 원하는 작업 분야의 문의 유형을 채움
+function applyWorkChoices(work) {
+  inquiryType.value = "work";
+  handleInquiryChange();   //코드로 바꾼 값은 change 이벤트가 일어나지 않으므로 안내 문구도 직접 갱신된다.
+
+  interestChecks.forEach(function (check) {
+    check.checked = check.value === work.category;   //작업분야가 같은 칸만 체크
+  });
+
+  clearAllErrors();   //이전에 떠 있던 오류 문구 정리
+  saveStep(1);        //채운 값을 상태(inquiry)박스에도 보관
+}
+
+function startInquiryFromWork(work) {
+  if (inquiry.isComplete) {
+    resetInquiry();       //이전 문의가 끝난 상태면 새 문의로 시작
+  }
+
+  applyWorkChoices(work);
+  inquiry.relatedWork = work;
+  renderWorkLink();
+  linkStatus.textContent = "'" + work.title + "' 작업에 맞춰 문의 유형을 채웠습니다.";
+
+  showStep(1);
+
+  //키보드 사용자가 contact에서 이어가도록 포커스를 옮기고, 화면 이동은 스크롤에 맡김.
+  document.querySelector('.step-panel[data-step="1"] h3').focus({ preventScroll: true });
+  document.querySelector("#contact").scrollIntoView({ behavior: "smooth" });
+}
+
+function handleUnlinkClick() {
+  inquiry.relatedWork = null;
+  renderWorkLink();
+  linkStatus.textContent = "작업연결을 해제 했습니다. 선택 값과 입력된 내용은 삭제 되지 않았습니다.";
+}
+
+unlinkButton.addEventListener("click", handleUnlinkClick);    //여기까지 추가됨.
+
 
 showStep(1); // 페이지가 열릴 때 1단계로 시작
