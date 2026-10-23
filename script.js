@@ -84,7 +84,7 @@ const works = [
 
 // 분야 코드를 화면에 보여줄 이름으로 바꾸는 표
 const categoryLabels = {
-  "3d": "3D 환경",
+  "3d": "3D 그래픽",
   "illust": "2D 일러스트",
   "video": "AI 영상"
 };
