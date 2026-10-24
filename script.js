@@ -56,7 +56,7 @@ const works = [
     title: "Best Stick Ever",
     category: "illust",
     thumb: "assets/works/Best Stick_Ever.jpg",
-    desc: "반려동물 일러스트로 재작한 굿즈",
+    desc: "반려동물 일러스트로 제작한 굿즈",
     link: "https://www.instagram.com/p/DeL92Jpj-5_/",
     linkLabel: "Instagram에서 보기"
   },
@@ -427,6 +427,7 @@ function showStep(n) {
 
   stepStatus.textContent = n + " / " + totalSteps + " 단계 · " + stepNames[n];
   inquiry.step = n;
+  linkStatus.textContent = "";        //단계가 바뀌면 이전 연결안내를 지움.
 }
 
 // 단계가 바뀐 뒤 제목으로 포커스를 옮김 (키보드·스크린리더 사용자가 위치를 잃지 않게)
@@ -769,16 +770,33 @@ function startInquiryFromWork(work) {
     resetInquiry();       //이전 문의가 끝난 상태면 새 문의로 시작
   }
 
+  //현재 연결된 작업과 같은 작업은 다시 누를 경우> 다시 채워지지않고 안내함.(조건확인)
+  //완료 후라면 위에서 resetInquiry()에 relatedWork가 null이 되어 이 조건에 걸리지 않고 새 문의로 진행
+  if (inquiry.relatedWork !== null && inquiry.relatedWork.id === work.id){
+    showAlreadyLinked(work);
+    return;                 //아래 '채우기' 과정을 건너뜀
+  }
+
   applyWorkChoices(work);
   inquiry.relatedWork = work;                 //상태에 '어떤 작업과 연결되었는지' 저장
   renderWorkLink();                           //저장한 상태를 반영
-  linkStatus.textContent = "'" + work.title + "' 작업에 맞춰 문의 유형을 채웠습니다.";
-
+  
   showStep(1);                                //머물던 단계가 몇번째이든 1단계로(이름, 이메일, 메세지는 그대로)
+  //**순서 주의** showStep이 안내 문구를 지우므로, 문구는 showStep "뒤에" 써야 화면에 남는다.
+  linkStatus.textContent = "'" + work.title + "' 작업에 맞춰 문의 유형을 채웠습니다.";
 
   //키보드 사용자가 contact에서 이어가도록 포커스를 옮기고, 화면 이동은 스크롤에 맡김.
   document.querySelector('.step-panel[data-step="1"] h3').focus({ preventScroll: true });     // preventScroll: 포커스 때문에 화면이 순간이동하지 않게해, 부드러운 스크롤을 살림
   document.querySelector("#contact").scrollIntoView({ behavior: "smooth" });
+}
+
+//같은 작업을 다시 눌렀을 때, 고른값, 입력내용, 보던 단계를 유지하고 이미 연결되었음을 알려줌.
+function showAlreadyLinked(work){
+  linkStatus.textContent = "'" + work.title + "'작업이 이미 연결되어 있습니다. 입력된 내용은 유지합니다.";
+
+  //1단계로 리턴없이 지금 단계(inquiry)의 제목으로 포커스를 이동.
+  document.querySelector('.step-panel[data-step="' + inquiry.step + '"] h3').focus({ preventScroll: true});
+  document.querySelector("#contact").scrollIntoView({ behavior: "smooth"});
 }
 
 //연결해제 = 작업과의 연결만 끊음. 이미 채워진 내용은 건드리지않음.
@@ -790,4 +808,4 @@ function handleUnlinkClick() {
 
 unlinkButton.addEventListener("click", handleUnlinkClick);    //여기까지 추가됨.
 
-showStep(1); // 페이지가 열릴 때 1단계로 시작
+showStep(1); // 페이지가 열릴 때 1단계로 시작. **위로 옮기지 않기**
