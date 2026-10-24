@@ -240,7 +240,7 @@ const modalTitle = document.querySelector("#modalTitle");
 const modalDesc = document.querySelector("#modalDesc");
 const modalLink = document.querySelector("#modalLink");
 
-let currentWork = null; //지금 모달에 열려있는 작업
+let currentWork = null; //지금 모달에 열려있는 작업. 버튼을 눌렀을 때 "어떤 작업인지" 알기위해 보관.
 
 function openModal(work) {
   // 영상이면 플레이어를, 그 외에는 큰 이미지를 넣음
@@ -264,7 +264,7 @@ function openModal(work) {
   workModal.hidden = false;
   document.body.classList.add("modal-open"); // 뒷배경 스크롤 막기
 
-  currentWork = work;  //문의하기 버튼이 어떤작업인지 알 수 있도록 기억함.
+  currentWork = work;  //문의하기 버튼이 어떤작업인지 알 수 있도록 기억함. 열 때 마다"지금 보는 작업"을 기억.
 }
 
 function closeModal() {
@@ -309,13 +309,13 @@ function handleKeydown(event) {
 document.addEventListener("keydown", handleKeydown);
 
 // 모달안의 "이작업으로 문의하기" :  모달을 닫고 contact로 이동
-const modalInquiryButton = document.querySelector("#modalInquiryButton");
+const modalInquiryButton = document.querySelector("#modalInquiryButton");   // 모달의 "이 작업으로 문의하기 버튼."
 
 function handleModalInquiryClick(){
-  const work = currentWork;  //모달을 닫기전에 어떤 작업이였는지 잡아둠.
+  const work = currentWork;     //모달을 닫기전에 closeModal()이 currentWork를 지울 수 있어 닫기전에 변수를 잡아둠.
 
-  closeModal();
-  startInquiryFromWork(work);   //아래의 작업물에서 문의로 이어지는 블록함수
+  closeModal();                 //모달을 닫고 배경 스크롤, 포커스 원위치.
+  startInquiryFromWork(work);   //아래의 작업물에서 문의로 이어지는 블록함수(문의 흐름시작)
 }
 
 modalInquiryButton.addEventListener("click", handleModalInquiryClick);
@@ -389,7 +389,7 @@ const inquiry = {
   name: "",
   email: "",
   message: "",
-  relatedWork: null,   //문의와 연결된 작업. (없으면 null)
+  relatedWork: null,   //문의와 연결된 작업. (없으면 null, 작업객체면 "그 작업과연결중.")
   isComplete: false
 };
 
@@ -414,7 +414,8 @@ const sumInterests = document.querySelector("#sumInterests");
 const sumName = document.querySelector("#sumName");
 const sumEmail = document.querySelector("#sumEmail");
 const sumMessage = document.querySelector("#sumMessage");
-
+const sumWorkRow = document.querySelector("#sumWorkRow");   //관련작업 행 전체
+const sumWork = document.querySelector("#sumWork");         //행안의 작품명 자리
 
 /* ----- 단계 전환 ----- */
 
@@ -567,6 +568,16 @@ function saveStep(n) {
   }
 }
 
+//확인 화면의 '관련작업'행> 연결된 작업이 있을 때만 보여줌> 연결이 없으면 행을 숨기고 끝.
+function renderSummaryWork(){
+  if (inquiry.relatedWork === null){
+    sumWorkRow.hidden = true;
+    return;
+  }
+  sumWork.textContent = inquiry.relatedWork.title;      // 작품명 채우기
+  sumWorkRow.hidden = false;                            // 행 보이기
+}
+
 // 3단계 확인 화면을 상태 값으로 채움
 function renderSummary() {
   sumType.textContent = typeLabels[inquiry.type];
@@ -578,6 +589,7 @@ function renderSummary() {
   sumName.textContent = inquiry.name;
   sumEmail.textContent = inquiry.email;
   sumMessage.textContent = inquiry.message;
+  renderSummaryWork();                                  //확인화면을 그릴 때 '관련작업' 행도 같이 맞춤.
 }
 
 
@@ -643,6 +655,14 @@ function finishInquiry() {
   submitMessage.textContent = makeSubmitMessage(inquiry.email, isSubmit);
   submitMessage.classList.add("is-success");
 
+  //작업물에서 이어진 문의라면 어떤 작업인지 완료 문구에 덧붙임.
+  if (inquiry.relatedWork !== null){
+    submitMessage.textContent += " (관련작업 : " + inquiry.relatedWork.title + ")";   //완료문구 끝에 어떤 작업으로 문의 했는지 덧붙임
+  }
+
+  renderWorkLink();                         //완료상태(isComplete)가 되고, "문의하는 중" 표시줄을 숨김.
+  linkStatus.textContent = "";              //연결안내 문구도 지움.
+
   showStep(4);
   focusStepTitle(4);
 }
@@ -678,7 +698,7 @@ function resetInquiry() {
   inquiry.email = "";
   inquiry.message = "";
   inquiry.isComplete = false;
-  inquiry.relatedWork = null;
+  inquiry.relatedWork = null;       //초기화할 때 연결도 같이 지워야 새 문의에 이전 작업이 남지않음.
   isSubmit = false;
 
   // 화면
@@ -689,8 +709,8 @@ function resetInquiry() {
   submitMessage.textContent = "";
   submitMessage.classList.remove("is-success");
 
-  renderWorkLink();
-  linkStatus.textContent = "";
+  renderWorkLink();                 //상태가 바뀌고 표시줄을 다시그림>> 숨겨짐
+  linkStatus.textContent = "";      //이전 안내 문주 지움.
 
   // 진행
   showStep(1);
@@ -701,15 +721,26 @@ document.querySelector("#restartButton").addEventListener("click", resetInquiry)
 
 
 /* ========== 작업물에서 문의로 이어지기 (click 이벤트) ========== */
+/*
+  사용자 목표 : 마음에 든 작업을 보고, 그 작업에 대해 바로 문의한다
+  
+  행동 > 이벤트 > 조건 > 화면 반응 > 다음 상태
+  1. 모달에서 문의하기 클릭 > click > 항상            > 모달 닫힘, 유형·분야 채움, 연결 표시줄 표시, 1단계로 이동 > relatedWork = 그 작업, step = 1
+  2. 문의하기 클릭        > click > 이미 완료된 문의  > 이전 문의를 초기화한 뒤 ①과 같이 진행                    > isComplete = false
+  3. 연결해제 클릭        > click > 연결된 작업 있음  > 표시줄 숨김, 고른 값·입력값은 그대로                     > relatedWork = null
+*/
 
-const workLink = document.querySelector("#workLink");
-const workLinkText = document.querySelector("#workLinkText");
-const linkStatus = document.querySelector("#linkStatus");
-const unlinkButton = document.querySelector("#unlinkButton");
+//화면에서 쓰는 요소들.
+const workLink = document.querySelector("#workLink");             //연결표시줄
+const workLinkText = document.querySelector("#workLinkText");     //상자안의 "작품명~~~"채우는글
+const linkStatus = document.querySelector("#linkStatus");         //연결,해제 결과 안내문구
+const unlinkButton = document.querySelector("#unlinkButton");     //연결해제버튼
 
 //연결된 작업이 있으면 표시줄을 보여주고, 없으면 숨기.
 function renderWorkLink() {
-  if (inquiry.relatedWork === null) {
+  renderSummaryWork();   //확인화면의 관련 작업행을 같이 맞춘다.
+
+  if (inquiry.relatedWork === null || inquiry.isComplete) {   //완료 후에는 "문의하는 중" 표시줄이 숨겨짐.
     workLink.hidden = true;
     return;
   }
@@ -718,7 +749,8 @@ function renderWorkLink() {
   workLink.hidden = false;
 }
 
-// 원하는 작업 분야의 문의 유형을 채움
+// 1단계 : 원하는 작업 분야의 문의 유형을 선택.
+//문의유형 = 작업문의, 관심분야 = 작업의 체크박스
 function applyWorkChoices(work) {
   inquiryType.value = "work";
   handleInquiryChange();   //코드로 바꾼 값은 change 이벤트가 일어나지 않으므로 안내 문구도 직접 갱신된다.
@@ -731,23 +763,25 @@ function applyWorkChoices(work) {
   saveStep(1);        //채운 값을 상태(inquiry)박스에도 보관
 }
 
+//작업물에서 문의로 들어오는 과정 : 끝난 문의면 새 문의로 시작 > 선택값 채움 > 작업 연결 표시 > 1단계로 이동-포커스-스크롤
 function startInquiryFromWork(work) {
   if (inquiry.isComplete) {
     resetInquiry();       //이전 문의가 끝난 상태면 새 문의로 시작
   }
 
   applyWorkChoices(work);
-  inquiry.relatedWork = work;
-  renderWorkLink();
+  inquiry.relatedWork = work;                 //상태에 '어떤 작업과 연결되었는지' 저장
+  renderWorkLink();                           //저장한 상태를 반영
   linkStatus.textContent = "'" + work.title + "' 작업에 맞춰 문의 유형을 채웠습니다.";
 
-  showStep(1);
+  showStep(1);                                //머물던 단계가 몇번째이든 1단계로(이름, 이메일, 메세지는 그대로)
 
   //키보드 사용자가 contact에서 이어가도록 포커스를 옮기고, 화면 이동은 스크롤에 맡김.
-  document.querySelector('.step-panel[data-step="1"] h3').focus({ preventScroll: true });
+  document.querySelector('.step-panel[data-step="1"] h3').focus({ preventScroll: true });     // preventScroll: 포커스 때문에 화면이 순간이동하지 않게해, 부드러운 스크롤을 살림
   document.querySelector("#contact").scrollIntoView({ behavior: "smooth" });
 }
 
+//연결해제 = 작업과의 연결만 끊음. 이미 채워진 내용은 건드리지않음.
 function handleUnlinkClick() {
   inquiry.relatedWork = null;
   renderWorkLink();
@@ -755,6 +789,5 @@ function handleUnlinkClick() {
 }
 
 unlinkButton.addEventListener("click", handleUnlinkClick);    //여기까지 추가됨.
-
 
 showStep(1); // 페이지가 열릴 때 1단계로 시작

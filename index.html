@@ -138,12 +138,14 @@
       <p id="stepStatus" aria-live="polite">1 / 4 단계 · 문의 유형</p>
 
       <!--작업물에서 문의로 들어온경우 : 어떤 작업과 연결되어있는지 표시-->
-      <div id="workLink" class="work-link" hidden>
-        <p id="workLinkText"></p>
+      <div id="workLink" class="work-link" hidden>  <!-- 어떤 작업을 보고 문의 중인지 확인. 연결이 없으면 hidden으로 숨긴다.-->
+        <p id="workLinkText"></p>                   <!-- JS에서 "'작품명' 작업을 보고~~" 글을 채움-->
         <button type="button" id="unlinkButton" class="unlink-button"> 연결해제 </button>
       </div>
-      <p id="linkStatus" aria-live="polite"></p>
-      
+
+      <!-- 연결, 해제 결과를 알려주는 문구. -->
+      <p id="linkStatus" aria-live="polite"></p>    <!-- aria-live="polite" 현재 읽고있는 내용을 끝낸 후 변경 내용을 읽음.-->
+
       <!-- novalidate : 브라우저 기본 검사 대신 script.js가 직접 검사하고 안내 -->
       <form id="contact-form" novalidate>
 
@@ -236,6 +238,13 @@
               <span class="summary-label">관심 분야</span>
               <span class="summary-value" id="sumInterests"></span>
               <button type="button" class="edit-button" data-goto="1" aria-label="관심 분야 수정">수정</button>
+            </li>
+            <!-- 3단계 확인 화면 : 연결된 작업이 있을 때만 JS가 보여줌.-->
+            <li class="summary-row" id="sumWorkRow" hidden>
+              <span class="summary-label">관련작업</span>
+              <span class="summary-value" id="sumWork"></span>      <!-- 작품명이 들어갈 자리 -->
+              <!--data-goto="1" >> 누르면 1단계로 돌아감.-->
+              <button type="button" class="edit-button" data-goto="1" aria-label="관련 작업 수정">수정</button>
             </li>
             <li class="summary-row">
               <span class="summary-label">이름</span>
