@@ -170,7 +170,7 @@ p{
 
 .about-row{
     display: flex;
-    align-items: flex-start;   /* 위쪽 선을 맞춤 */
+    align-items: center;        /* 사진과 글을 가운데(center)에 맞춤 */
     gap: 32px;
     margin-top: 24px;
 }
@@ -189,12 +189,14 @@ p{
 }
 
 .about-text p:first-child{
-    margin-mid: 0;
+    margin-top: 0;              /* 첫 문단 위쪽 기본 여백제거*/
 }
 
+.about-text p:last-child{
+    margin-bottom: 0;           /*마지막 문단 아래쪽 기본 여백 제거*/
+}
 
 /* ===== 입력 요소 공통 ===== */
-
 input,
 select,
 textarea{
@@ -542,6 +544,11 @@ body.dark .tab.is-active{
     font-weight: 700;
 }
 
+/*모달안의 '이작업으로 문의하기' 버튼 */
+.modal-inquiry{
+    display: block;         /* 링크아래 줄로 내려옴*/
+    margin-top: 16px;
+}
 
 /* ===== Contact ===== */
 
@@ -721,6 +728,11 @@ body.dark .edit-button:hover{
     border-bottom: 1px solid var(--border-soft);
 }
 
+/* display:flex이 hidden 속성을 덮어쓰기 때문에, 무시되지 않도록 숨김은 따로 지정. */
+.summary-row[hidden]{
+    display: none;
+}
+
 .summary-label{
     flex: 0 0 6em;
     font-weight: 700;
@@ -740,6 +752,59 @@ body.dark .edit-button:hover{
     font-size: 0.9em;
 }
 
+/* 작업물에서 이어진 문의 연결 표시 */
+.work-link{
+    display: flex;                      /*글과 해제버튼을 한 줄에*/
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border: 1px solid var(--green);
+    border-radius: 10px;
+    background-color: var(--surface);
+}
+
+/* 위의 display:flex이 hidden 속성을 덮어쓰기 때문에, 무시되지 않도록 숨김은 따로 지정. */
+.work-link[hidden]{
+    display: none;
+}
+
+.work-link p{
+    margin: 0;
+    font-weight: 700;
+}
+
+/* 연결 해제 : 보조 버튼이라 외곽선만 */
+.unlink-button{
+    flex: 0 0 auto;                 /*버튼이 줄어들거나 늘어나지않게*/
+    padding: 6px 14px;
+    font-size: 0.9em;
+    color: var(--text-soft);
+    background-color: transparent;  /*보조버튼이라 테두리만*/
+    border: 1px solid var(--border);
+}
+
+.unlink-button:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+body.dark .unlink-button:hover{     /*다크모드용 hover*/
+    color: var(--bg);
+    background-color: var(--accent);
+}
+
+/* 안내 문구 : 비어 있으면 자리를 차지하지 않음 */
+#linkStatus{
+    margin-bottom: 12px;
+    font-size: 0.9em;
+    color: var(--text-soft);
+}
+
+#linkStatus:empty{                  /* 글없을때는 자리 차지않게 */
+    display: none;
+}
 
 /* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
@@ -803,7 +868,6 @@ body.dark .edit-button:hover{
     /* 아래 버튼들은 가로로 늘리지 않습니다 */
     .tab,
     #themeButton,
-    .modal-close,
     .work-button{
         width: auto;
         min-height: auto;
@@ -812,43 +876,57 @@ body.dark .edit-button:hover{
     .work-button{
         width: 100%;
     }
-
+    
     #submitButton{
         align-self: stretch;
     }
-
+    
     .modal{
         padding: 16px;
     }
-
+    
     .modal-box{
         padding: 20px;
     }
-
+    
     /* 확인 목록 : 제목과 수정 버튼은 윗줄, 내용은 아랫줄 */
     .summary-row{
         flex-wrap: wrap;
         gap: 8px 16px;
     }
-
+    
     .summary-label{
         flex: 1;
     }
-
+    
     .summary-value{
         order: 3;
         flex: 1 0 100%;
     }
-
+    
     /* 수정 버튼은 가로로 늘리지 않되, 누르는 영역은 확보 */
     .edit-button{
         width: auto;
+        min-height: 44px;
+    }
+    
+    /* 모바일에서는 연결표시줄을 세로로 쌓는다.*/
+    .work-link{
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    /*닫기버튼 동그라미를 유지하기 위함.*/
+    .modal-close{
+        width: 44px;
+        height: 44px;
         min-height: 44px;
     }
 
     /* 좁은 화면에서는 프로필과 글을 위아래로 배치 */
     .about-row{
         flex-direction: column;
+        align-items: flex-start;        /*세로배치에는 프로필 사진을 왼쪽으로 배치*/
         gap: 16px;
     }
 }
