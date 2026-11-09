@@ -49,7 +49,7 @@
 
         <div class="about-text">
           <p>안녕하세요. 저는 3D 배경 디자이너로 일하며 디지털 트윈, VR, 메타버스 콘텐츠를 만들어 왔습니다.</p>
-          <p>현재 3D 배경 그래픽과, 프로그래밍, AI를 활용하여 다양한 방법으로 제작 할 수 있는 배경 제작을 공부하고 있습니다.</p>
+          <p>현재 3D 배경 그래픽과, 프로그래밍, AI를 활용하여 배경 제작을 다양한 방법으로 만드는 공부를 하고 있습니다.</p>
           <p>작업은 3D 그래픽, 2D 일러스트, AI 영상 작업물로 나누어져 있습니다.</p>
         </div>
       </div>
@@ -198,23 +198,55 @@
         <div class="step-panel" data-step="2" hidden>
           <h3 tabindex="-1">연락 정보와 문의 내용</h3>
 
+          <!-- 칸 하나 = label + 입력 + 안내(도움말, 글자 수) + 오류 문구.
+               aria-describedby : 입력칸에 안내와 오류를 연결해 스크린리더가 함께 읽게 함 -->
           <div class="field">
             <!-- input 이벤트 : 이름 입력 -->
             <label for="visitorName">이름 <span class="required">(필수)</span></label>
-            <input type="text" id="visitorName" name="visitorName" maxlength="10" autocomplete="name" aria-required="true">
-            <p class="field-error" hidden></p>
+            <input type="text" id="visitorName" name="visitorName" maxlength="10" autocomplete="name" aria-required="true" aria-describedby="nameHelp nameError">
+            <div class="field-meta">
+              <p class="field-help" id="nameHelp">답변할 때 부를 이름입니다. 최대 10자까지 쓸 수 있습니다.</p>
+              <p class="field-count" id="nameCount">0 / 10자</p>
+            </div>
+            <p class="field-error" id="nameError" role="alert" hidden></p>
           </div>
 
           <div class="field">
             <label for="email">Email <span class="required">(필수)</span></label>
-            <input type="email" id="email" name="email" autocomplete="email" aria-required="true">
-            <p class="field-error" hidden></p>
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" aria-describedby="emailHelp emailError">
+            <div class="field-meta">
+              <p class="field-help" id="emailHelp">답변을 받을 주소입니다. 예: name@example.com</p>
+            </div>
+            <p class="field-error" id="emailError" role="alert" hidden></p>
           </div>
 
           <div class="field">
             <label for="message">Message <span class="required">(필수)</span></label>
-            <textarea id="message" name="message" aria-required="true"></textarea>
-            <p class="field-error" hidden></p>
+            <textarea id="message" name="message" maxlength="500" aria-required="true" aria-describedby="messageHelp messageError"></textarea>
+            <div class="field-meta">
+              <p class="field-help" id="messageHelp">원하는 작업과 일정을 10자 이상 적어주세요.</p>
+              <p class="field-count" id="messageCount">0 / 500자</p>
+            </div>
+            <p class="field-error" id="messageError" role="alert" hidden></p>
+          </div>
+
+          <!-- change 이벤트 : 체크하면 SNS 입력 영역이 나타나고, 해제하면 사라짐 -->
+          <div class="sns-option">
+            <label class="checkrow">
+              <input type="checkbox" id="snsCheck" name="snsContact" value="yes" aria-controls="snsField" aria-expanded="false">
+              SNS(인스타그램·카카오톡 등)로도 답변받기
+            </label>
+          </div>
+
+          <!-- 숨겨진 동안은 disabled : Tab으로 닿지 않고, 제출 값에도 들어가지 않음 (script.js의 renderSnsField) -->
+          <div class="field" id="snsField" hidden>
+            <label for="snsId">SNS 아이디 또는 링크 <span class="required">(필수)</span></label>
+            <input type="text" id="snsId" name="snsId" maxlength="50" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
+            <div class="field-meta">
+              <p class="field-help" id="snsHelp">답변받을 SNS 아이디나 링크를 적어주세요. 예: @sunone.art</p>
+              <p class="field-count" id="snsCount">0 / 50자</p>
+            </div>
+            <p class="field-error" id="snsError" role="alert" hidden></p>
           </div>
 
           <div class="step-actions">
@@ -256,12 +288,21 @@
               <span class="summary-value" id="sumEmail"></span>
               <button type="button" class="edit-button" data-goto="2" aria-label="이메일 수정">수정</button>
             </li>
+            <!-- 3단계 확인 화면 : SNS 답변을 고른 경우에만 JS가 보여줌 -->
+            <li class="summary-row" id="sumSnsRow" hidden>
+              <span class="summary-label">SNS</span>
+              <span class="summary-value" id="sumSns"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="SNS 수정">수정</button>
+            </li>
             <li class="summary-row">
               <span class="summary-label">Message</span>
               <span class="summary-value" id="sumMessage"></span>
               <button type="button" class="edit-button" data-goto="2" aria-label="메시지 수정">수정</button>
             </li>
           </ul>
+
+          <!-- 제출 상태 안내 : 저장 중 / 저장 실패 문구가 들어옴. 비어 있으면 자리를 차지하지 않음 -->
+          <p id="submitStatus" role="status"></p>
 
           <div class="step-actions">
             <button type="button" class="prev-button">이전</button>

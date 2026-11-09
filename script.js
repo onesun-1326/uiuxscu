@@ -376,6 +376,9 @@ inquiryType.addEventListener("change", handleInquiryChange);
   ④ 수정 클릭     > click  > 3단계에서      > 해당 단계로 이동                      > step = 1 또는 2
   ⑤ 제출 클릭     > submit > 3단계에서      > 완료 화면 표시                        > isComplete = true
   ⑥ 새 문의 작성  > click  > 4단계에서      > 입력·선택·오류·진행 상태 초기화       > step = 1
+  ⑦ 글자 입력     > input  > 2단계에서      > 글자 수와 안내 문구 갱신, 조건 충족 시 "✓" 문구와 초록 테두리 > 오류가 떠 있던 칸은 바로 재검사
+  ⑧ SNS 체크·해제 > change > 2단계에서      > SNS 입력 영역 표시·숨김, 숨기면 disabled                       > 해제하면 SNS 검사 제외
+  ⑨ 제출 클릭     > submit > 3단계에서      > 1·2단계 재검사 통과 시 "저장 중…"(버튼 잠금) 후 완료             > 실패하면 3단계에 머물고 "다시 시도"
 */
 
 const totalSteps = 4;
@@ -389,6 +392,7 @@ const inquiry = {
   name: "",
   email: "",
   message: "",
+  sns: "",        //SNS 로도 답변받기를 고른 경우의 아이디 링크 (고르지않으면 "")
   relatedWork: null,   //문의와 연결된 작업. (없으면 null, 작업객체면 "그 작업과연결중.")
   isComplete: false
 };
@@ -409,6 +413,13 @@ const emailInput = document.querySelector("#email");
 const messageInput = document.querySelector("#message");
 const submitMessage = document.querySelector("#submitMessage");
 
+
+const snsCheck = document.querySelector("#snsCheck");       //"SNS로도 답변받기" 체크박스
+const snsField = document.querySelector("#snsField");       //체크하면 나타나는 입력 영역 전체
+const snsInput = document.querySelector("#snsId");          //영역 안의 입력 칸
+const submitButton = document.querySelector("#submitButton");
+const submitStatus = document.querySelector("#submitStatus");   //저장 중 / 저장 실패 안내
+
 const sumType = document.querySelector("#sumType");
 const sumInterests = document.querySelector("#sumInterests");
 const sumName = document.querySelector("#sumName");
@@ -416,6 +427,9 @@ const sumEmail = document.querySelector("#sumEmail");
 const sumMessage = document.querySelector("#sumMessage");
 const sumWorkRow = document.querySelector("#sumWorkRow");   //관련작업 행 전체
 const sumWork = document.querySelector("#sumWork");         //행안의 작품명 자리
+
+const sumSnsRow = document.querySelector("#sumSnsRow");     //SNS 행 전체 (SNS를 고른 경우에만 보임)
+const sumSns = document.querySelector("#sumSns");
 
 /* ----- 단계 전환 ----- */
 
@@ -466,23 +480,160 @@ function showError(control, message) {
   control.setAttribute("aria-invalid", "true");
 }
 
-// 사용자가 고치기 시작하면 그 칸의 오류 문구는 지움
+/* ----- 칸별 검사 : 문제가 있으면 "문제 + 고치는 방법" 문구를, 없으면 "" 를 돌려줌 ----- */
+
+function checkName() {
+  if (visitorName.value.trim() === "") {
+    return "이름을 입력해 주세요. 답변할 때 부를 이름입니다.";
+  }
+
+  return "";
+}
+
+function checkEmail() {
+  const email = emailInput.value.trim();
+
+  if (email === "") {
+    return "이메일을 입력해 주세요. 답변을 받을 주소입니다.";
+  }
+
+  if (!emailPattern.test(email)) {
+    return "이메일 형식이 올바르지 않습니다. 예: name@example.com";
+  }
+
+  return "";
+}
+
+const messageMinLength = 10;   // 문의 내용 최소 글자 수 (앞뒤 공백 제외)
+
+function checkMessage() {
+  const length = messageInput.value.trim().length;
+
+  if (length === 0) {
+    return "문의 내용을 입력해 주세요. 원하는 작업과 일정을 적어주시면 좋습니다.";
+  }
+
+  // 빈 값과 짧은 값은 서로 다른 문제이므로 문구도 따로 안내
+  if (length < messageMinLength) {
+    return "문의 내용이 너무 짧습니다. " + messageMinLength + "자 이상 적어주세요. (현재 " + length + "자)";
+  }
+
+  return "";
+}
+
+const snsMinLength = 2;   // SNS 아이디 최소 글자 수 (앞뒤 공백 제외)
+
+function checkSns() {
+  const length = snsInput.value.trim().length;
+
+  if (length === 0) {
+    return "SNS 아이디나 링크를 입력해 주세요. 예: @sunone.art";
+  }
+
+  if (length < snsMinLength) {
+    return "SNS 아이디가 너무 짧습니다. " + snsMinLength + "자 이상 입력해 주세요.";
+  }
+
+  return "";
+}
+
+/* ----- 입력 중 상태 : 안내 문구, 글자 수, 조건 충족 표시 ----- */
+
+// 칸마다 : 검사 함수, 조건을 충족했을 때 보여줄 문구. (기본 안내 문구는 HTML에 적혀 있고 아래에서 읽어 옴)
+const fieldRules = {
+  visitorName: { check: checkName, ok: "입력 조건을 충족했습니다." },
+  email: { check: checkEmail, ok: "올바른 이메일 형식입니다." },
+  message: { check: checkMessage, ok: "입력 조건을 충족했습니다." },
+  snsId: { check: checkSns, ok: "입력 조건을 충족했습니다." }
+};
+
+Object.keys(fieldRules).forEach(function (id) {
+  const help = document.querySelector("#" + id).closest(".field").querySelector(".field-help");
+  fieldRules[id].help = help.textContent;   // HTML에 적어 둔 기본 안내를 보관
+});
+
+// 칸 하나의 안내 문구·글자 수·성공 표시를 현재 값에 맞춤
+function updateFieldState(control) {
+  const rule = fieldRules[control.id];
+  const field = control.closest(".field");
+  const help = field.querySelector(".field-help");
+  const count = field.querySelector(".field-count");
+  const problem = rule.check();
+
+  if (count !== null) {
+    count.textContent = control.value.length + " / " + control.maxLength + "자";   // 글자 수는 입력한 그대로 셈
+  }
+
+  // 성공은 색(초록 테두리)과 문구("✓ ...")를 함께 바꿔 색을 못 보는 사람도 구분할 수 있게 함
+  if (problem === "") {
+    help.textContent = "✓ " + rule.ok;
+    field.classList.add("is-valid");
+  } else {
+    help.textContent = rule.help;
+    field.classList.remove("is-valid");
+  }
+
+  // 이미 오류 문구가 떠 있는 칸은, 고치는 동안 결과를 바로 보여줌 (고치면 해제, 아직이면 문구 갱신)
+  if (!field.querySelector(".field-error").hidden) {
+    if (problem === "") {
+      clearFieldError(field);
+    } else {
+      showError(control, problem);
+    }
+  }
+}
+
+function refreshAllFields() {
+  Object.keys(fieldRules).forEach(function (id) {
+    updateFieldState(document.querySelector("#" + id));
+  });
+}
+
+// 입력할 때마다 : 규칙이 있는 칸은 상태를 갱신하고, 규칙이 없는 칸(1단계의 선택 요소)은 예전처럼 오류만 지움
 function handleFieldFix(event) {
   const field = event.target.closest(".field");
 
-  if (field) {
-    clearFieldError(field);
+  if (field === null) {
+    return;
   }
+
+  if (fieldRules[event.target.id] !== undefined) {
+    updateFieldState(event.target);
+    return;
+  }
+
+  clearFieldError(field);
 }
 
 contactForm.addEventListener("input", handleFieldFix);
 contactForm.addEventListener("change", handleFieldFix);
 
 
+/* ----- 조건부 입력 : SNS로도 답변받기 (change 이벤트) ----- */
+
+// 체크 상태에 맞춰 SNS 입력 영역을 보이고 숨김.
+// 숨길 때는 disabled로 입력 칸을 꺼서 Tab으로 닿지 않게 하고, 다시 보이면 쓸 수 있게 켬. (값은 남겨 둠)
+function renderSnsField() {
+  const on = snsCheck.checked;
+
+  snsField.hidden = !on;
+  snsInput.disabled = !on;
+  snsCheck.setAttribute("aria-expanded", String(on));
+
+  if (!on) {
+    clearFieldError(snsField);   // 숨겨진 칸의 오류 문구는 남기지 않음
+  }
+
+  updateFieldState(snsInput);
+}
+
+snsCheck.addEventListener("change", renderSnsField);
+
+
 /* ----- 검사와 저장 ----- */
 
-// 해당 단계의 필수 입력을 검사. 통과하면 true, 하나라도 문제면 false
-function validateStep(n) {
+// 해당 단계의 문제 목록을 만듦. 화면은 건드리지 않고, 문제가 없으면 빈 배열을 돌려줌
+function collectProblems(n) {
   const problems = [];
 
   if (n === 1) {
@@ -506,34 +657,30 @@ function validateStep(n) {
   }
 
   if (n === 2) {
-    if (visitorName.value.trim() === "") {
-      problems.push({
-        control: visitorName,
-        message: "이름을 입력해 주세요. 답변할 때 부를 이름입니다."
-      });
+    const checks = [
+      { control: visitorName, message: checkName() },
+      { control: emailInput, message: checkEmail() },
+      { control: messageInput, message: checkMessage() }
+    ];
+
+    // SNS 칸은 체크했을 때만 검사 (숨겨진 칸은 검사하지 않음)
+    if (snsCheck.checked) {
+      checks.push({ control: snsInput, message: checkSns() });
     }
 
-    const email = emailInput.value.trim();
-
-    if (email === "") {
-      problems.push({
-        control: emailInput,
-        message: "이메일을 입력해 주세요. 답변을 받을 주소입니다."
-      });
-    } else if (!emailPattern.test(email)) {
-      problems.push({
-        control: emailInput,
-        message: "이메일 형식이 올바르지 않습니다. 예: name@example.com"
-      });
-    }
-
-    if (messageInput.value.trim() === "") {
-      problems.push({
-        control: messageInput,
-        message: "문의 내용을 입력해 주세요. 원하는 작업과 일정을 적어주시면 좋습니다."
-      });
-    }
+    checks.forEach(function (item) {
+      if (item.message !== "") {
+        problems.push(item);
+      }
+    });
   }
+
+  return problems;
+}
+
+// 해당 단계의 입력을 검사하고 화면에 안내. 통과하면 true, 하나라도 문제면 false
+function validateStep(n) {
+  const problems = collectProblems(n);
 
   clearAllErrors(); // 이전 오류는 지우고, 지금 남은 문제만 다시 표시
 
@@ -566,6 +713,7 @@ function saveStep(n) {
     inquiry.name = visitorName.value.trim();
     inquiry.email = emailInput.value.trim();
     inquiry.message = messageInput.value.trim();
+    inquiry.sns = snsCheck.checked ? snsInput.value.trim() : "";   //체크를 해제한 SNS 값은 보관하지 않음
   }
 }
 
@@ -590,6 +738,8 @@ function renderSummary() {
   sumName.textContent = inquiry.name;
   sumEmail.textContent = inquiry.email;
   sumMessage.textContent = inquiry.message;
+  sumSns.textContent = inquiry.sns;
+  sumSnsRow.hidden = inquiry.sns === "";                //SNS를 고르지 않았으면 행을 숨김
   renderSummaryWork();                                  //확인화면을 그릴 때 '관련작업' 행도 같이 맞춤.
 }
 
@@ -653,7 +803,8 @@ function finishInquiry() {
   submitCount += 1;
   inquiry.isComplete = true;
 
-  submitMessage.textContent = makeSubmitMessage(inquiry.email, isSubmit);
+  // 실제로 한 일(브라우저에 저장)을 먼저 알리고, 기존 안내 문구를 이어서 붙임
+  submitMessage.textContent = "문의 내용이 이 브라우저에 저장되었습니다. " + makeSubmitMessage(inquiry.email, isSubmit);
   submitMessage.classList.add("is-success");
 
   //작업물에서 이어진 문의라면 어떤 작업인지 완료 문구에 덧붙임.
@@ -668,6 +819,82 @@ function finishInquiry() {
   focusStepTitle(4);
 }
 
+/* ----- 제출 상태 : 저장 중 → 완료 / 실패(다시 시도) ----- */
+
+/*
+  저장 = 브라우저 localStorage에 문의 내용을 기록하는 것 (서버로는 보내지 않음)
+  저장 중이 눈에 보이도록 submitDelay(ms) 동안 기다린 뒤 저장함
+  실패 조건 : localStorage.setItem이 예외를 던질 때 (저장 공간이 가득 찼거나, 브라우저가 저장을 막은 경우) → saveInquiry의 catch
+*/
+const storageKey = "seonwon-inquiry-sent";   // 저장한 문의를 보관하는 키
+const storageLimit = 5;                       // 최근 몇 건까지 남길지
+const submitDelay = 800;                      // 저장 중 상태를 보여주는 시간 (ms)
+let isSaving = false;                         // 저장 중이면 true (중복 제출 방지)
+
+// 제출 버튼과 안내 문구를 상태에 맞춤. state : "idle"(제출 전) | "saving"(저장 중) | "failed"(실패)
+function setSubmitState(state) {
+  const saving = state === "saving";
+
+  submitButton.disabled = saving;                       // 저장 중에는 다시 누를 수 없게 막음
+  submitButton.textContent = saving ? "저장 중…" : (state === "failed" ? "다시 시도" : "제출하기");
+  contactForm.setAttribute("aria-busy", String(saving));
+
+  // 저장하는 동안 다른 단계로 가서 값을 바꾸지 못하게 이전·수정 버튼도 잠금
+  contactForm.querySelectorAll(".prev-button, .edit-button").forEach(function (button) {
+    button.disabled = saving;
+  });
+
+  submitStatus.classList.toggle("is-error", state === "failed");
+
+  if (state === "saving") {
+    submitStatus.textContent = "문의 내용을 저장하는 중입니다. 잠시만 기다려 주세요.";
+  } else if (state === "failed") {
+    submitStatus.textContent = "⚠ 저장하지 못했습니다. 입력한 내용은 그대로 남아 있습니다. 브라우저의 저장 공간·저장 차단 설정을 확인한 뒤 '다시 시도'를 눌러 주세요.";
+  } else {
+    submitStatus.textContent = "";
+  }
+}
+
+// 저장해 둔 문의 목록을 읽음. 읽을 수 없거나 형식이 깨졌으면 빈 목록
+function readSavedList() {
+  try {
+    const list = JSON.parse(localStorage.getItem(storageKey));
+    return Array.isArray(list) ? list : [];
+  } catch (error) {
+    return [];
+  }
+}
+
+// 제출 내용을 localStorage에 저장. 성공하면 완료 화면, 실패하면 3단계에 머물며 다시 시도할 수 있게 함
+function saveInquiry() {
+  const record = {
+    type: inquiry.type,
+    interests: inquiry.interests,
+    name: inquiry.name,
+    email: inquiry.email,
+    sns: inquiry.sns,
+    message: inquiry.message,
+    relatedWork: inquiry.relatedWork === null ? null : inquiry.relatedWork.title,
+    savedAt: new Date().toISOString()
+  };
+
+  try {
+    const list = readSavedList();
+    list.push(record);
+    localStorage.setItem(storageKey, JSON.stringify(list.slice(-storageLimit)));
+  } catch (error) {
+    // 실패 : 입력값(inquiry와 입력 칸)은 건드리지 않고, 버튼을 "다시 시도"로 되살림
+    isSaving = false;
+    setSubmitState("failed");
+    submitButton.focus();    // 잠겼던 버튼에서 사라진 초점을 되돌림
+    return;
+  }
+
+  isSaving = false;
+  setSubmitState("idle");
+  finishInquiry();
+}
+
 function handleSubmit(event) {
   event.preventDefault(); // 폼 제출 기본 동작 방지
 
@@ -677,12 +904,24 @@ function handleSubmit(event) {
     return;
   }
 
-  // 완료 상태에서는 다시 제출되지 않음
-  if (inquiry.isComplete) {
+  // 완료 상태이거나 저장 중이면 다시 제출되지 않음
+  if (inquiry.isComplete || isSaving) {
     return;
   }
 
-  finishInquiry();
+  // 제출 직전에 1·2단계를 한 번 더 검사. 문제가 있으면 제출하지 않고 그 단계를 열어 안내
+  for (let n = 1; n <= 2; n++) {
+    if (collectProblems(n).length > 0) {
+      showStep(n);
+      validateStep(n);        // 오류 문구를 띄우고 첫 문제 칸으로 초점 이동
+      stepStatus.textContent += " · 수정이 필요한 항목이 있습니다.";
+      return;
+    }
+  }
+
+  isSaving = true;
+  setSubmitState("saving");
+  window.setTimeout(saveInquiry, submitDelay);
 }
 
 contactForm.addEventListener("submit", handleSubmit);
@@ -698,13 +937,18 @@ function resetInquiry() {
   inquiry.name = "";
   inquiry.email = "";
   inquiry.message = "";
+  inquiry.sns = "";
   inquiry.isComplete = false;
   inquiry.relatedWork = null;       //초기화할 때 연결도 같이 지워야 새 문의에 이전 작업이 남지않음.
   isSubmit = false;
+  isSaving = false;
 
   // 화면
   contactForm.reset();        // 입력 칸, 선택, 체크박스를 처음 값으로
   clearAllErrors();
+  renderSnsField();           // reset은 이벤트를 일으키지 않으므로 SNS 영역(숨김·disabled)을 직접 맞춤
+  refreshAllFields();         // 안내 문구, 글자 수, 성공 표시도 처음 상태로
+  setSubmitState("idle");     // 제출 버튼 문구·잠금, 저장 안내, 이전·수정 버튼도 처음 상태로
   greeting.textContent = defaultGreeting;
   inquiryGuide.textContent = defaultGuide;
   submitMessage.textContent = "";
@@ -808,4 +1052,6 @@ function handleUnlinkClick() {
 
 unlinkButton.addEventListener("click", handleUnlinkClick);    //여기까지 추가됨.
 
+renderSnsField();   // 처음에는 SNS 영역이 숨겨지고 입력 칸이 disabled가 되도록 맞춤
+refreshAllFields(); // 칸마다 기본 안내 문구와 글자 수(0 / 최대)를 표시
 showStep(1); // 페이지가 열릴 때 1단계로 시작. **위로 옮기지 않기**

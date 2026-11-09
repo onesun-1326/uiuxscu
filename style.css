@@ -609,6 +609,33 @@ form label{
      cursor: not-allowed;
 }
 
+/* 저장하는 동안 잠기는 이전·수정 버튼 */
+.prev-button:disabled,
+.edit-button:disabled{
+     opacity: 0.5;
+     cursor: not-allowed;
+}
+
+/* 제출 상태 안내 : 저장 중 / 저장 실패. 비어 있으면 자리를 차지하지 않음 */
+#submitStatus{
+     margin: 0;
+     padding: 12px;
+     border-radius: 10px;
+     font-weight: 700;
+     color: var(--green-dark);
+     background-color: var(--surface-soft);
+}
+
+#submitStatus.is-error{
+     color: var(--error);
+     background-color: transparent;
+     border: 1px solid var(--error);
+}
+
+#submitStatus:empty{
+     display: none;
+}
+
 
 /* ===== Contact 4단계 흐름 ===== */
 
@@ -679,6 +706,56 @@ form .checkrow{
 [aria-invalid="true"]{
     border-color: var(--error);
     box-shadow: 0 0 0 1px var(--error);
+}
+
+/* hidden 속성이 display:flex 때문에 무시되지 않도록 따로 지정. (SNS 입력 영역) */
+.field[hidden]{
+    display: none;
+}
+
+/* 입력 칸 아래 한 줄 : 왼쪽 안내(도움말·조건 충족 문구), 오른쪽 글자 수 */
+.field-meta{
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: -4px;
+    font-size: 0.9em;
+}
+
+.field-help{
+    flex: 1;
+    margin: 0;
+    color: var(--text-soft);
+}
+
+.field-count{
+    margin: 0;
+    white-space: nowrap;
+    font-weight: 700;
+    color: var(--text-soft);
+}
+
+/* 조건 충족 : 초록 테두리 + 굵은 "✓" 문구. 색만으로 구분하지 않도록 문구가 함께 바뀜 */
+.field.is-valid input,
+.field.is-valid textarea{
+    border-color: var(--green);
+}
+
+.field.is-valid .field-help{
+    font-weight: 700;
+    color: var(--success-text);
+}
+
+/* 오류가 떠 있는 동안에는 오류 문구가 우선 : 초록 표시를 걷음 (오류 테두리가 이김) */
+.field input[aria-invalid="true"],
+.field textarea[aria-invalid="true"]{
+    border-color: var(--error);
+}
+
+/* SNS 체크박스 줄 : 체크박스 글자는 굵게 하지 않음 */
+.sns-option{
+    margin-top: 4px;
 }
 
 /* 이전 / 다음 / 제출 버튼 묶음 */
