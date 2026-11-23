@@ -248,11 +248,11 @@
 
           <!-- 숨겨진 동안은 disabled : Tab으로 닿지 않고, 제출 값에도 들어가지 않음 (script.js의 renderSnsField) -->
           <div class="field" id="snsField" hidden>
-            <label for="snsId">SNS 아이디 또는 링크 <span class="required">(필수)</span></label>
-            <input type="text" id="snsId" name="snsId" maxlength="50" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
+            <label for="snsId">SNS 계정명 또는 주소 <span class="required">(필수)</span></label>
+            <input type="text" id="snsId" name="snsId" maxlength="100" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
             <div class="field-meta">
-              <p class="field-help" id="snsHelp">답변받을 SNS 아이디나 링크를 적어주세요. 예: @sunone.art</p>
-              <p class="field-count" id="snsCount">0 / 50자</p>
+              <p class="field-help" id="snsHelp">답변받을 SNS 계정명이나 주소 중 하나를 적어주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art</p>
+              <p class="field-count" id="snsCount">0 / 100자</p>
             </div>
             <p class="field-error" id="snsError" role="alert" hidden></p>
           </div>

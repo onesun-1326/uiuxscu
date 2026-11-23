@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SEONWON</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@100..900&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <!--
+    사용자 : 작업물을 보러 온 사람 (채용 담당자, 협업 제안자, 동료 창작자)
+    목적 : 어떤 작업을 하는 사람인지 빠르게 파악한다.
+    핵심 행동 : 관심 분야를 골라 작업물을 보고, 원본으로 이동하거나 문의를 남긴다.
+    정보 순서 : 소개 > 작업 분야 > 작업물 > 문의하기 > 내 문의
+    메뉴 : 소개 / 작업 분야 / 작업물 / 문의하기 / 내 문의 (각 메뉴는 같은 이름의 영역으로 이동)
+  -->
+  <header>
+    <h1>SEONWON</h1>
+
+    <div class="header-row">
+      <p>3D 그래픽, 2D 일러스트, AI 영상 작업을 합니다.</p>
+
+      <!-- click 이벤트 : 테마 전환 -->
+      <button id="themeButton" type="button">다크 모드</button>
+    </div>
+
+    <!-- click 이벤트 : 좁은 화면에서 메뉴 열기·닫기. JS가 켜졌을 때만 보임(script.js의 setMenuOpen) -->
+    <button type="button" id="menuToggle" class="menu-toggle" aria-controls="main-nav" aria-expanded="false" hidden>메뉴 열기</button>
+
+    <!-- 메뉴 : 현재 위치는 script.js(updateCurrentNav)가 aria-current="page"로 표시 -->
+    <nav id="main-nav" class="main-nav" aria-label="주요 메뉴">
+      <ul>
+        <li><a href="#about">소개</a></li>
+        <li><a href="#fields">작업 분야</a></li>
+        <li><a href="#works">작업물</a></li>
+        <li><a href="#contact">문의하기</a></li>
+        <li><a href="#history">내 문의</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <!-- 소개 -->
+    <section id="about">
+      <h2>소개</h2>
+      <h3>3D Environment Artist</h3>
+
+      <div class="about-row">
+        <img src="assets/images/profile.jpg" alt="SEONWON 프로필 이미지">
+
+        <div class="about-text">
+          <p>안녕하세요. 저는 3D 배경 디자이너로 일하며 디지털 트윈, VR, 메타버스 콘텐츠를 만들어 왔습니다.</p>
+          <p>현재 3D 배경 그래픽과, 프로그래밍, AI를 활용하여 배경 제작을 다양한 방법으로 만드는 공부를 하고 있습니다.</p>
+          <p>작업은 3D 그래픽, 2D 일러스트, AI 영상 작업물로 나누어져 있습니다.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 작업 분야 : 탭으로 전환 -->
+    <section id="fields">
+      <h2>작업 분야</h2>
+
+      <!-- click 이벤트 : 탭 전환 -->
+      <div class="tabs" role="tablist" aria-label="작업 분야 선택">
+        <button type="button" class="tab is-active" data-target="#field-3d" aria-selected="true">3D 그래픽</button>
+        <button type="button" class="tab" data-target="#field-illust" aria-selected="false">2D 일러스트</button>
+        <button type="button" class="tab" data-target="#field-video" aria-selected="false">AI 영상</button>
+      </div>
+
+      <div id="field-3d" class="panel is-active">
+        <h3>3D 그래픽</h3>
+        <p>게임과 실시간 콘텐츠에 쓰이는 배경과 구조물을 만듭니다.</p>
+        <p>모듈러와 트림시트로 제작해 재사용과 수정이 쉬운 구조를 설계합니다.</p>
+        <p>디지털 트윈, VR, 메타버스 프로젝트를 주로 맡아 왔습니다.</p>
+      </div>
+
+      <div id="field-illust" class="panel" hidden>
+        <h3>2D 일러스트</h3>
+        <p>동물을 주제로 한 드로잉과 굿즈 디자인 작업을 합니다.</p>
+        <p>드로잉과 일러스트 작업으로 스티커와 엽서 등의 굿즈를 제작중 입니다.</p>
+        <p>무념무개라는 이름으로 작업을 올리고 있습니다.</p>
+      </div>
+
+      <div id="field-video" class="panel" hidden>
+        <h3>AI 영상</h3>
+        <p>AI 도구를 활용해 짧은 영상을 만듭니다.</p>
+        <p>장면의 분위기와 연출을 직접 설계하고 다듬는 과정을 거칩니다.</p>
+        <p>수묵화, 회화풍 배경 등 그림 질감을 살린 연출을 실험하고 있습니다.</p>
+      </div>
+    </section>
+
+    <!-- 작업물 : 필터 + 그리드 + 모달 -->
+    <section id="works">
+      <h2>작업물</h2>
+
+      <!-- change 이벤트 : 분야 필터 -->
+      <div class="work-filter">
+        <label class="checkrow">
+          <input type="checkbox" id="checkAll" checked>
+          전체
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="category-check" value="3d" checked>
+          3D 그래픽
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="category-check" value="illust" checked>
+          2D 일러스트
+        </label>
+
+        <label class="checkrow">
+          <input type="checkbox" class="category-check" value="video" checked>
+          AI 영상
+        </label>
+      </div>
+
+      <p id="filterStatus" aria-live="polite">전체 작업이 선택되었습니다.</p>
+
+      <!-- 카드는 script.js가 채웁니다 -->
+      <ul id="workGrid" class="work-grid"></ul>
+    </section>
+
+    <!--
+      문의하기 : 4단계 문의 흐름
+      사용자 목표 : 협업·작업 문의를 남긴다
+      핵심 행동 : 유형·분야 선택 > 연락 정보 입력 > 내용 확인 후 제출
+      완료 조건 : 3단계에서 제출하면 4단계 완료 화면이 표시된다
+      단계 : 1 선택 > 2 입력 > 3 확인 > 4 완료 (script.js의 showStep()로 전환)
+    -->
+    <section id="contact" class="contact-card">
+      <h2>문의하기</h2>
+
+      <!-- input 이벤트의 결과가 표시되는 자리 -->
+      <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
+
+      <!-- 진행 상태 : showStep()이 갱신 -->
+      <p id="stepStatus" aria-live="polite">1 / 4 단계 · 문의 유형</p>
+
+      <!--작업물에서 문의로 들어온경우 : 어떤 작업과 연결되어있는지 표시-->
+      <div id="workLink" class="work-link" hidden>  <!-- 어떤 작업을 보고 문의 중인지 확인. 연결이 없으면 hidden으로 숨긴다.-->
+        <p id="workLinkText"></p>                   <!-- JS에서 "'작품명' 작업을 보고~~" 글을 채움-->
+        <button type="button" id="unlinkButton" class="unlink-button"> 연결해제 </button>
+      </div>
+
+      <!-- 연결, 해제 결과를 알려주는 문구. -->
+      <p id="linkStatus" aria-live="polite"></p>    <!-- aria-live="polite" 현재 읽고있는 내용을 끝낸 후 변경 내용을 읽음.-->
+
+      <!-- novalidate : 브라우저 기본 검사 대신 script.js가 직접 검사하고 안내 -->
+      <form id="contact-form" novalidate>
+
+        <!-- 1단계 : 선택 -->
+        <div class="step-panel" data-step="1">
+          <h3 tabindex="-1">문의 유형과 관심 분야</h3>
+
+          <div class="field">
+            <!-- change 이벤트 : 문의 유형 선택 -->
+            <label for="inquiryType">문의 유형 <span class="required">(필수)</span></label>
+            <select id="inquiryType" name="inquiryType" aria-required="true">
+              <option value="">선택해 주세요</option>
+              <option value="collab">협업 문의</option>
+              <option value="work">작업 문의</option>
+              <option value="etc">기타</option>
+            </select>
+            <p class="field-error" hidden></p>
+          </div>
+
+          <p id="inquiryGuide" aria-live="polite">문의 유형을 고르면 작성 안내가 표시됩니다.</p>
+
+          <div class="field" role="group" aria-labelledby="interestLabel">
+            <div id="interestLabel" class="field-label">관심 분야 <span class="required">(필수, 1개 이상)</span></div>
+
+            <div class="work-filter">
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="3d">
+                3D 그래픽
+              </label>
+
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="illust">
+                2D 일러스트
+              </label>
+
+              <label class="checkrow">
+                <input type="checkbox" class="interest-check" name="interest" value="video">
+                AI 영상
+              </label>
+            </div>
+            <p class="field-error" hidden></p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="next-button">다음</button>
+          </div>
+        </div>
+
+        <!-- 2단계 : 입력 -->
+        <div class="step-panel" data-step="2" hidden>
+          <h3 tabindex="-1">연락 정보와 문의 내용</h3>
+
+          <!-- 칸 하나 = label + 입력 + 안내(도움말, 글자 수) + 오류 문구.
+               aria-describedby : 입력칸에 안내와 오류를 연결해 스크린리더가 함께 읽게 함 -->
+          <div class="field">
+            <!-- input 이벤트 : 이름 입력 -->
+            <label for="visitorName">이름 <span class="required">(필수)</span></label>
+            <input type="text" id="visitorName" name="visitorName" maxlength="10" autocomplete="name" aria-required="true" aria-describedby="nameHelp nameError">
+            <div class="field-meta">
+              <p class="field-help" id="nameHelp">답변할 때 부를 이름입니다. 최대 10자까지 쓸 수 있습니다.</p>
+              <p class="field-count" id="nameCount">0 / 10자</p>
+            </div>
+            <p class="field-error" id="nameError" role="alert" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="email">Email <span class="required">(필수)</span></label>
+            <input type="email" id="email" name="email" autocomplete="email" aria-required="true" aria-describedby="emailHelp emailError">
+            <div class="field-meta">
+              <p class="field-help" id="emailHelp">답변을 받을 주소입니다. 예: name@example.com</p>
+            </div>
+            <p class="field-error" id="emailError" role="alert" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="message">Message <span class="required">(필수)</span></label>
+            <textarea id="message" name="message" maxlength="500" aria-required="true" aria-describedby="messageHelp messageError"></textarea>
+            <div class="field-meta">
+              <p class="field-help" id="messageHelp">원하는 작업과 일정을 10자 이상 적어주세요.</p>
+              <p class="field-count" id="messageCount">0 / 500자</p>
+            </div>
+            <p class="field-error" id="messageError" role="alert" hidden></p>
+          </div>
+
+          <!-- change 이벤트 : 체크하면 SNS 입력 영역이 나타나고, 해제하면 사라짐 -->
+          <div class="sns-option">
+            <label class="checkrow">
+              <input type="checkbox" id="snsCheck" name="snsContact" value="yes" aria-controls="snsField" aria-expanded="false">
+              SNS(인스타그램·카카오톡 등)로도 답변받기
+            </label>
+          </div>
+
+          <!-- 숨겨진 동안은 disabled : Tab으로 닿지 않고, 제출 값에도 들어가지 않음 (script.js의 renderSnsField) -->
+          <div class="field" id="snsField" hidden>
+            <label for="snsId">SNS 계정명 또는 주소 <span class="required">(필수)</span></label>
+            <input type="text" id="snsId" name="snsId" maxlength="100" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
+            <div class="field-meta">
+              <p class="field-help" id="snsHelp">답변받을 SNS 계정명이나 주소 중 하나를 적어주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art</p>
+              <p class="field-count" id="snsCount">0 / 100자</p>
+            </div>
+            <p class="field-error" id="snsError" role="alert" hidden></p>
+          </div>
+
+          <div class="step-actions">
+            <button type="button" class="prev-button">이전</button>
+            <button type="button" class="next-button">다음</button>
+          </div>
+        </div>
+
+        <!-- 3단계 : 확인 (입력값은 script.js가 채웁니다) -->
+        <div class="step-panel" data-step="3" hidden>
+          <h3 tabindex="-1">입력 내용 확인</h3>
+          <p>내용을 확인하고 제출해 주세요. 고칠 항목은 수정 버튼으로 돌아갈 수 있습니다.</p>
+
+          <ul class="summary">
+            <li class="summary-row">
+              <span class="summary-label">문의 유형</span>
+              <span class="summary-value" id="sumType"></span>
+              <button type="button" class="edit-button" data-goto="1" aria-label="문의 유형 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">관심 분야</span>
+              <span class="summary-value" id="sumInterests"></span>
+              <button type="button" class="edit-button" data-goto="1" aria-label="관심 분야 수정">수정</button>
+            </li>
+            <!-- 3단계 확인 화면 : 연결된 작업이 있을 때만 JS가 보여줌.-->
+            <li class="summary-row" id="sumWorkRow" hidden>
+              <span class="summary-label">관련작업</span>
+              <span class="summary-value" id="sumWork"></span>      <!-- 작품명이 들어갈 자리 -->
+              <!--data-goto="1" >> 누르면 1단계로 돌아감.-->
+              <button type="button" class="edit-button" data-goto="1" aria-label="관련 작업 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">이름</span>
+              <span class="summary-value" id="sumName"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="이름 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">Email</span>
+              <span class="summary-value" id="sumEmail"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="이메일 수정">수정</button>
+            </li>
+            <!-- 3단계 확인 화면 : SNS 답변을 고른 경우에만 JS가 보여줌 -->
+            <li class="summary-row" id="sumSnsRow" hidden>
+              <span class="summary-label">SNS</span>
+              <span class="summary-value" id="sumSns"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="SNS 수정">수정</button>
+            </li>
+            <li class="summary-row">
+              <span class="summary-label">Message</span>
+              <span class="summary-value" id="sumMessage"></span>
+              <button type="button" class="edit-button" data-goto="2" aria-label="메시지 수정">수정</button>
+            </li>
+          </ul>
+
+          <!-- 제출 상태 안내 : 저장 중 / 저장 실패 문구가 들어옴. 비어 있으면 자리를 차지하지 않음 -->
+          <p id="submitStatus" role="status"></p>
+
+          <div class="step-actions">
+            <button type="button" class="prev-button">이전</button>
+            <button id="submitButton" type="submit">제출하기</button>
+          </div>
+        </div>
+
+        <!-- 4단계 : 완료 -->
+        <div class="step-panel" data-step="4" hidden>
+          <h3 tabindex="-1">작성이 완료되었습니다</h3>
+
+          <!-- 완료 메시지 : 제출할 때 script.js가 채웁니다 -->
+          <p id="submitMessage"></p>
+
+          <div class="step-actions">
+            <button id="restartButton" type="button">새 문의 작성</button>
+            <!-- 제출한 문의가 목록에 들어갔는지 바로 확인하러 가는 링크 -->
+            <a href="#history" class="button-link">내 문의 내역 보기</a>
+          </div>
+        </div>
+
+      </form>
+    </section>
+
+    <!--
+      내 문의 내역 : 제출한 문의를 목록으로 보고 유형별로 골라 봄
+      데이터 : 제출할 때 localStorage에 저장한 기록 (script.js의 saveInquiry / readSavedList)
+      필터 : 전체 / 협업 문의 / 작업 문의 / 기타 (click 이벤트, 선택 상태는 aria-pressed로 표시)
+      결과 안내 : 표시 중인 항목 수 + 결과 없음 2종 (저장된 문의가 없음 / 고른 유형에 맞는 문의가 없음)
+    -->
+    <section id="history">
+      <h2>내 문의 내역</h2>
+      <p>이 브라우저에서 제출한 문의입니다. 서버로 보내지 않고 이 기기의 브라우저에만 저장됩니다.</p>
+
+      <div class="history-filter" role="group" aria-label="문의 유형별 보기">
+        <button type="button" class="filter-button" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" class="filter-button" data-filter="collab" aria-pressed="false">협업 문의</button>
+        <button type="button" class="filter-button" data-filter="work" aria-pressed="false">작업 문의</button>
+        <button type="button" class="filter-button" data-filter="etc" aria-pressed="false">기타</button>
+      </div>
+
+      <!-- 표시 중인 항목 수 안내. 필터를 바꾸면 스크린리더가 읽어 줌 -->
+      <p id="historyStatus" role="status"></p>
+
+      <ul id="historyList" class="history-list"></ul>
+
+      <!-- 결과 없음 안내 : 문구와 다음 행동은 script.js(renderHistory)가 상황에 맞게 바꿈 -->
+      <div id="historyEmpty" class="history-empty" hidden>
+        <p id="historyEmptyText"></p>
+        <a id="historyEmptyLink" class="button-link" href="#contact">문의 남기러 가기</a>
+        <button type="button" id="historyShowAll">전체 보기</button>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <small>© 2026 SEONWON. All rights reserved.</small>
+  </footer>
+
+  <!-- 작업물 상세 모달 -->
+  <div id="workModal" class="modal" hidden>
+    <div class="modal-overlay" data-close></div>
+
+    <div class="modal-box" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <button type="button" class="modal-close" data-close aria-label="닫기">✕</button>
+
+      <!-- 이미지 또는 영상 플레이어가 들어가는 자리 -->
+      <div id="modalMedia" class="modal-media"></div>
+
+      <h3 id="modalTitle"></h3>
+      <p id="modalDesc"></p>
+      <a id="modalLink" class="modal-link" href="#" target="_blank" rel="noopener"></a>
+
+      <!-- click 이벤트 : 이 작업으로 문의하기-->
+      <button type="button" id="modalInquiryButton" class="modal-inquiry"> 이 작업으로 문의하기 </button>
+    </div>
+  </div>
+
+  <!-- 자바스크립트 연결 -->
+  <script src="script.js"></script>
+
+</body>
+
+</html>

@@ -521,17 +521,18 @@ function checkMessage() {
   return "";
 }
 
-const snsMinLength = 2;   // SNS 아이디 최소 글자 수 (앞뒤 공백 제외)
+const snsMinLength = 2;   // SNS 계정명·주소 최소 글자 수 (앞뒤 공백 제외)
+const snsExample = "계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art";   // 도움말·오류 문구에 같이 보여 줄 입력 예시
 
 function checkSns() {
   const length = snsInput.value.trim().length;
 
   if (length === 0) {
-    return "SNS 아이디나 링크를 입력해 주세요. 예: @sunone.art";
+    return "SNS 계정명이나 주소를 입력해 주세요. " + snsExample;
   }
 
   if (length < snsMinLength) {
-    return "SNS 아이디가 너무 짧습니다. " + snsMinLength + "자 이상 입력해 주세요.";
+    return "SNS 계정명이나 주소가 너무 짧습니다. " + snsMinLength + "자 이상 입력해 주세요. " + snsExample;
   }
 
   return "";

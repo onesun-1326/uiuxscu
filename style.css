@@ -764,11 +764,14 @@ form .checkrow{
 
 .field-help{
     flex: 1;
+    min-width: 0;              /* 긴 주소 예시가 줄바꿈되지 않아 글자 수를 칸 밖으로 밀어내지 않도록 */
     margin: 0;
     color: var(--text-soft);
+    overflow-wrap: anywhere;
 }
 
 .field-count{
+    flex-shrink: 0;
     margin: 0;
     white-space: nowrap;
     font-weight: 700;

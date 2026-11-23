@@ -1,0 +1,83 @@
+diff -ruN a/README.md b/README.md
+--- a/README.md	2026-11-23 11:14:18.569064747 +0000
++++ b/README.md	2026-11-23 11:14:18.576074751 +0000
+@@ -79,7 +79,7 @@
+ | 이름 | 필수, 공백 제외 1자 이상, 최대 10자 | 답변할 때 부를 이름입니다. 최대 10자까지 쓸 수 있습니다. | 이름을 입력해 주세요. 답변할 때 부를 이름입니다. |
+ | Email | 필수, `a@b.c` 형식 | 답변을 받을 주소입니다. 예: name@example.com | 비었을 때 : 이메일을 입력해 주세요. 답변을 받을 주소입니다. / 형식 오류 : 이메일 형식이 올바르지 않습니다. 예: name@example.com |
+ | Message | 필수, 공백 제외 10자 이상, 최대 500자 | 원하는 작업과 일정을 10자 이상 적어주세요. | 비었을 때 : 문의 내용을 입력해 주세요. 원하는 작업과 일정을 적어주시면 좋습니다. / 짧을 때 : 문의 내용이 너무 짧습니다. 10자 이상 적어주세요. (현재 N자) |
+-| SNS (체크했을 때만) | 필수, 공백 제외 2자 이상, 최대 50자 | 답변받을 SNS 아이디나 링크를 적어주세요. 예: @sunone.art | 비었을 때 : SNS 아이디나 링크를 입력해 주세요. 예: @sunone.art / 짧을 때 : SNS 아이디가 너무 짧습니다. 2자 이상 입력해 주세요. |
++| SNS (체크했을 때만) | 필수, 공백 제외 2자 이상, 최대 100자 | 답변받을 SNS 계정명이나 주소 중 하나를 적어주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art | 비었을 때 : SNS 계정명이나 주소를 입력해 주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art / 짧을 때 : SNS 계정명이나 주소가 너무 짧습니다. 2자 이상 입력해 주세요. + 비었을 때와 같은 입력 예시 |
+ 
+ ### 인터렉션 시나리오
+ - 행동 > 이벤트 > 조건 > 반응 > 다음 상태
+@@ -114,7 +114,7 @@
+ | 1 | 2단계에서 비운 채 이름 칸에서 Enter | 제출·이동 막고 오류 안내, 첫 오류 칸 focus | 2단계 유지. '이름을 입력해 주세요. 답변할 때 부를 이름입니다.' / '이메일을 입력해 주세요. 답변을 받을 주소입니다.' / '문의 내용을 입력해 주세요. 원하는 작업과 일정을 적어주시면 좋습니다.' 3개가 뜨고 초점이 이름 칸으로 이동 | ○ |
+ | 2 | 이메일 `abc`, 문의 내용 `짧은글` 입력 | 형식·길이 오류 문구 | '이메일 형식이 올바르지 않습니다. 예: name@example.com', '문의 내용이 너무 짧습니다. 10자 이상 적어주세요. (현재 3자)' 표시 | ○ |
+ | 3 | 이메일·문의 내용을 올바르게 고침 | 다음을 누르지 않아도 오류 해제 | 입력하는 동안 오류 문구가 사라지고 '✓ 입력 조건을 충족했습니다.', 초록 테두리, 글자 수 갱신 | ○ |
+-| 4 | SNS 체크 | SNS 입력 칸 나타남 | 'SNS 아이디 또는 링크' 칸이 나타남. 비운 채 다음 → 'SNS 아이디나 링크를 입력해 주세요. 예: @sunone.art', `a` 입력 → 'SNS 아이디가 너무 짧습니다. 2자 이상 입력해 주세요.' | ○ |
++| 4 | SNS 체크 | SNS 입력 칸 나타남 | 'SNS 계정명 또는 주소' 칸이 나타남. 비운 채 다음 → 'SNS 계정명이나 주소를 입력해 주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art', `a` 입력 → 'SNS 계정명이나 주소가 너무 짧습니다. 2자 이상 입력해 주세요. …' | ○ |
+ | 5 | SNS 체크 해제 | 칸 사라짐, 값 유지, 검사 제외 | 칸이 사라지고 다시 체크하면 이전 값이 남아 있음. 해제 상태에서는 SNS가 비어도 다음으로 이동. (개발자 도구에서 숨겨진 칸에 `disabled` 확인) | ○ |
+ | 6 | 3단계 확인 | SNS를 고른 경우만 SNS 행 표시 | SNS 체크 시 'SNS' 행이 보이고 수정은 2단계로 이동. 체크하지 않으면 행 없음 | ○ |
+ | 7 | '제출하기' 클릭 | 저장 중 표시 후 완료 | 버튼 '저장 중…'(잠김), '문의 내용을 저장하는 중입니다. 잠시만 기다려 주세요.', 이전·수정 버튼 잠김 → 0.8초 뒤 4단계, '문의 내용이 이 브라우저에 저장되었습니다. …' | ○ |
+diff -ruN a/index.html b/index.html
+--- a/index.html	2026-11-23 11:14:18.569234510 +0000
++++ b/index.html	2026-11-23 11:14:18.571068453 +0000
+@@ -248,11 +248,11 @@
+ 
+           <!-- 숨겨진 동안은 disabled : Tab으로 닿지 않고, 제출 값에도 들어가지 않음 (script.js의 renderSnsField) -->
+           <div class="field" id="snsField" hidden>
+-            <label for="snsId">SNS 아이디 또는 링크 <span class="required">(필수)</span></label>
+-            <input type="text" id="snsId" name="snsId" maxlength="50" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
++            <label for="snsId">SNS 계정명 또는 주소 <span class="required">(필수)</span></label>
++            <input type="text" id="snsId" name="snsId" maxlength="100" autocomplete="off" aria-required="true" aria-describedby="snsHelp snsError" disabled>
+             <div class="field-meta">
+-              <p class="field-help" id="snsHelp">답변받을 SNS 아이디나 링크를 적어주세요. 예: @sunone.art</p>
+-              <p class="field-count" id="snsCount">0 / 50자</p>
++              <p class="field-help" id="snsHelp">답변받을 SNS 계정명이나 주소 중 하나를 적어주세요. 계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art</p>
++              <p class="field-count" id="snsCount">0 / 100자</p>
+             </div>
+             <p class="field-error" id="snsError" role="alert" hidden></p>
+           </div>
+diff -ruN a/script.js b/script.js
+--- a/script.js	2026-11-23 11:14:18.569376289 +0000
++++ b/script.js	2026-11-23 11:14:18.572671230 +0000
+@@ -521,17 +521,18 @@
+   return "";
+ }
+ 
+-const snsMinLength = 2;   // SNS 아이디 최소 글자 수 (앞뒤 공백 제외)
++const snsMinLength = 2;   // SNS 계정명·주소 최소 글자 수 (앞뒤 공백 제외)
++const snsExample = "계정명 예: @sunone.art / 주소 예: https://www.instagram.com/sunone.art";   // 도움말·오류 문구에 같이 보여 줄 입력 예시
+ 
+ function checkSns() {
+   const length = snsInput.value.trim().length;
+ 
+   if (length === 0) {
+-    return "SNS 아이디나 링크를 입력해 주세요. 예: @sunone.art";
++    return "SNS 계정명이나 주소를 입력해 주세요. " + snsExample;
+   }
+ 
+   if (length < snsMinLength) {
+-    return "SNS 아이디가 너무 짧습니다. " + snsMinLength + "자 이상 입력해 주세요.";
++    return "SNS 계정명이나 주소가 너무 짧습니다. " + snsMinLength + "자 이상 입력해 주세요. " + snsExample;
+   }
+ 
+   return "";
+diff -ruN a/style.css b/style.css
+--- a/style.css	2026-11-23 11:14:18.569480980 +0000
++++ b/style.css	2026-11-23 11:14:18.574386114 +0000
+@@ -764,11 +764,14 @@
+ 
+ .field-help{
+     flex: 1;
++    min-width: 0;              /* 긴 주소 예시가 줄바꿈되지 않아 글자 수를 칸 밖으로 밀어내지 않도록 */
+     margin: 0;
+     color: var(--text-soft);
++    overflow-wrap: anywhere;
+ }
+ 
+ .field-count{
++    flex-shrink: 0;
+     margin: 0;
+     white-space: nowrap;
+     font-weight: 700;
