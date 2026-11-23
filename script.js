@@ -827,7 +827,7 @@ function finishInquiry() {
   실패 조건 : localStorage.setItem이 예외를 던질 때 (저장 공간이 가득 찼거나, 브라우저가 저장을 막은 경우) → saveInquiry의 catch
 */
 const storageKey = "seonwon-inquiry-sent";   // 저장한 문의를 보관하는 키
-const storageLimit = 5;                       // 최근 몇 건까지 남길지
+const storageLimit = 20;                      // 최근 몇 건까지 남길지 (내 문의 내역 목록에도 이만큼까지 보임)
 const submitDelay = 800;                      // 저장 중 상태를 보여주는 시간 (ms)
 let isSaving = false;                         // 저장 중이면 true (중복 제출 방지)
 
@@ -892,6 +892,9 @@ function saveInquiry() {
 
   isSaving = false;
   setSubmitState("idle");
+
+  currentHistoryFilter = "all";   // 방금 낸 문의가 필터에 가려지지 않게 전체로 되돌리고
+  renderHistory();                // 내 문의 내역을 새 기록까지 다시 그림
   finishInquiry();
 }
 
@@ -1052,6 +1055,313 @@ function handleUnlinkClick() {
 
 unlinkButton.addEventListener("click", handleUnlinkClick);    //여기까지 추가됨.
 
+/* ========== 내 문의 내역 (click 이벤트, 필터 + 결과 안내) ========== */
+/*
+  사용자 목표 : 내가 보낸 문의를 유형별로 골라 본다
+  행동 > 이벤트 > 조건 > 화면 반응 > 다음 상태
+  1. 필터 버튼 클릭    > click > 항상                > 선택 표시·aria-pressed·목록·항목 수 안내가 함께 바뀜 > currentHistoryFilter = 고른 값
+  2. (저장된 문의 0건) > 그림  > 전체 목록이 없음    > "아직 보낸 문의가 없어요" + 문의하러 가기 링크
+  3. (고른 유형 0건)   > 그림  > 조건에 맞는 것만 없음 > "이 유형의 문의가 없어요" + 전체 보기 버튼
+  4. 전체 보기 클릭    > click > 조건 결과가 없을 때  > 전체로 되돌리고, 사라진 버튼 대신 '전체' 버튼으로 초점 이동
+*/
+
+const historyFilterButtons = document.querySelectorAll(".history-filter .filter-button");
+const historyList = document.querySelector("#historyList");
+const historyStatus = document.querySelector("#historyStatus");
+const historyEmpty = document.querySelector("#historyEmpty");
+const historyEmptyText = document.querySelector("#historyEmptyText");
+const historyEmptyLink = document.querySelector("#historyEmptyLink");
+const historyShowAll = document.querySelector("#historyShowAll");
+
+const historyFilterNames = { all: "전체", collab: "협업 문의", work: "작업 문의", etc: "기타" };
+let currentHistoryFilter = "all";   // 지금 고른 필터 > "all" | "collab" | "work" | "etc"
+
+function pad2(number) {
+  return String(number).padStart(2, "0");
+}
+
+// 저장된 시각(ISO 문자열)을 "2026.11.23 14:05" 꼴로 바꿈. 읽을 수 없으면 "날짜 없음"
+function formatSavedAt(iso) {
+  const date = new Date(iso);
+
+  if (Number.isNaN(date.getTime())) {
+    return "날짜 없음";
+  }
+
+  return date.getFullYear() + "." + pad2(date.getMonth() + 1) + "." + pad2(date.getDate()) +
+    " " + pad2(date.getHours()) + ":" + pad2(date.getMinutes());
+}
+
+// 기록 하나를 목록 항목(li)으로 만듦. 글자는 textContent로 넣어 입력 내용이 코드로 해석되지 않게 함
+function createHistoryItem(record) {
+  const item = document.createElement("li");
+  item.className = "history-item";
+
+  const head = document.createElement("div");
+  head.className = "history-head";
+
+  const type = document.createElement("span");
+  type.className = "history-type";
+  type.textContent = typeLabels[record.type] || "기타";
+
+  const date = document.createElement("span");
+  date.className = "history-date";
+  date.textContent = formatSavedAt(record.savedAt);
+
+  head.append(type, date);
+
+  const interests = Array.isArray(record.interests) ? record.interests : [];
+  const metaParts = [];
+
+  if (interests.length > 0) {
+    metaParts.push("관심 분야 : " + interests.map(function (value) {
+      return categoryLabels[value] || value;
+    }).join(", "));
+  }
+
+  if (record.relatedWork) {
+    metaParts.push("관련 작업 : " + record.relatedWork);
+  }
+
+  item.append(head);
+
+  if (metaParts.length > 0) {
+    const meta = document.createElement("p");
+    meta.className = "history-meta";
+    meta.textContent = metaParts.join(" · ");
+    item.append(meta);
+  }
+
+  // 이메일·이름은 목록에 보이지 않고, 메시지는 앞부분만 보임
+  const message = document.createElement("p");
+  message.className = "history-message";
+  const text = String(record.message || "");
+  message.textContent = text.length > 60 ? text.slice(0, 60) + "…" : text;
+  item.append(message);
+
+  return item;
+}
+
+// 고른 필터에 맞는 기록만 골라냄 (최신 문의가 위로 오게 뒤집음)
+function getVisibleHistory(records) {
+  return records.filter(function (record) {
+    return currentHistoryFilter === "all" || record.type === currentHistoryFilter;
+  }).reverse();
+}
+
+// 필터 버튼의 선택 표시를 현재 필터에 맞춤. aria-pressed가 CSS 선택 표시도 겸함
+function updateHistoryButtons() {
+  historyFilterButtons.forEach(function (button) {
+    button.setAttribute("aria-pressed", String(button.dataset.filter === currentHistoryFilter));
+  });
+}
+
+// 저장된 기록을 읽어 목록·항목 수 안내·결과 없음 안내를 한 번에 다시 그림
+function renderHistory() {
+  // 저장값이 손상돼 객체가 아닌 값이 섞여 있어도 화면이 깨지지 않게 걸러냄
+  const records = readSavedList().filter(function (record) {
+    return record !== null && typeof record === "object";
+  });
+  const visible = getVisibleHistory(records);
+  const filterName = historyFilterNames[currentHistoryFilter];
+
+  updateHistoryButtons();
+  historyList.replaceChildren.apply(historyList, visible.map(createHistoryItem));
+  historyList.hidden = visible.length === 0;
+  historyEmpty.hidden = visible.length !== 0;
+
+  if (records.length === 0) {
+    // 전체 목록이 없는 경우 : 아직 아무것도 제출하지 않음 > 다음 행동은 문의하러 가기
+    historyStatus.textContent = "저장된 문의가 없습니다.";
+    historyEmptyText.textContent = "아직 보낸 문의가 없어요. 문의하기에서 첫 문의를 남겨 보세요.";
+    historyEmptyLink.hidden = false;
+    historyShowAll.hidden = true;
+  } else if (visible.length === 0) {
+    // 조건에 맞는 결과만 없는 경우 : 전체에는 기록이 있음 > 다음 행동은 전체 보기
+    historyStatus.textContent = "'" + filterName + "' 문의는 0건입니다. (전체 " + records.length + "건)";
+    historyEmptyText.textContent = "'" + filterName + "' 유형으로 보낸 문의가 없어요. 다른 유형을 고르거나 전체를 확인해 보세요.";
+    historyEmptyLink.hidden = true;
+    historyShowAll.hidden = false;
+  } else if (currentHistoryFilter === "all") {
+    historyStatus.textContent = "전체 " + records.length + "건을 표시합니다.";
+  } else {
+    historyStatus.textContent = "전체 " + records.length + "건 중 '" + filterName + "' " + visible.length + "건을 표시합니다.";
+  }
+}
+
+// 필터 버튼은 목록을 다시 그려도 그대로 남으므로 한 번만 연결하면 됨
+function handleHistoryFilterClick(event) {
+  const button = event.target.closest(".filter-button");
+
+  if (!button) {
+    return;
+  }
+
+  currentHistoryFilter = button.dataset.filter;
+  renderHistory();
+}
+
+document.querySelector(".history-filter").addEventListener("click", handleHistoryFilterClick);
+
+// 결과가 없을 때 : 전체로 되돌림. 눌렀던 버튼이 사라지므로 초점을 '전체' 필터로 옮김
+function handleHistoryShowAllClick() {
+  currentHistoryFilter = "all";
+  renderHistory();
+  historyFilterButtons[0].focus();
+}
+
+historyShowAll.addEventListener("click", handleHistoryShowAllClick);
+
+
+/* ========== 메뉴 : 현재 위치 표시 + 모바일 열기·닫기 (click / scroll / hashchange 이벤트) ========== */
+/*
+  현재 위치 : 화면 위쪽에 걸려 있는 영역의 메뉴에만 aria-current="page"를 달고, 나머지는 제거
+  언제 다시 계산하나 : 스크롤(메뉴 클릭·뒤로 가기·새로고침 뒤의 위치 복원 포함) / 주소 변경 / 창 크기 변경 / 처음 열 때
+  주소(hash)만 보면 스크롤로 이동했을 때 틀려지므로, 실제 화면 위치를 기준으로 판단함
+
+  모바일 메뉴 : 버튼 한 번에 표시 상태(is-collapsed)·버튼 문구·aria-expanded를 함께 바꿈
+  접힘 규칙은 좁은 화면(CSS @media)에서만 적용되므로 넓은 화면에서는 메뉴가 항상 보임
+*/
+
+const mainNav = document.querySelector("#main-nav");
+const menuToggle = document.querySelector("#menuToggle");
+const navLinks = document.querySelectorAll("#main-nav a");
+
+// 메뉴 링크가 가리키는 영역들 (메뉴 순서 = 화면 순서)
+const navSections = Array.from(navLinks).map(function (link) {
+  return document.querySelector(link.getAttribute("href"));
+});
+
+const currentLine = 120;   // 영역의 윗부분이 화면 위에서 이 거리(px) 안으로 올라오면 그 영역이 현재 위치
+
+/*
+  방금 메뉴·주소로 이동한 영역 : 화면이 높아서 그 영역의 윗부분이 맨 위까지 올라오지 못해도(마지막 영역이 아래에 붙어 있는 경우)
+  누른 메뉴가 현재 위치로 남도록 기억해 둠. 그 뒤 스크롤이 움직이거나 그 영역이 화면에서 사라지면 기억을 버리고 화면 위치로 다시 판단함
+*/
+let lockedSection = null;
+let lockedScrollY = 0;
+
+function isOnScreen(section) {
+  const rect = section.getBoundingClientRect();
+  return rect.top < window.innerHeight && rect.bottom > 0;
+}
+
+// 지금 화면의 현재 영역(section)을 찾음
+function findCurrentSection() {
+  if (lockedSection !== null) {
+    if (Math.abs(window.scrollY - lockedScrollY) <= 2 && isOnScreen(lockedSection)) {
+      return lockedSection;
+    }
+
+    lockedSection = null;
+  }
+
+  let current = navSections[0];    // 맨 위에서는 첫 메뉴(소개)
+
+  navSections.forEach(function (section) {
+    if (section.getBoundingClientRect().top <= currentLine) {
+      current = section;
+    }
+  });
+
+  // 페이지 맨 끝까지 내려왔는데 마지막 영역이 짧아 윗부분이 올라오지 못한 경우
+  const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2;
+
+  if (atBottom) {
+    current = navSections[navSections.length - 1];
+  }
+
+  return current;
+}
+
+// 현재 메뉴에만 aria-current를 달고 나머지에서는 제거
+function updateCurrentNav() {
+  const currentId = findCurrentSection().id;
+
+  navLinks.forEach(function (link) {
+    if (link.getAttribute("href") === "#" + currentId) {
+      link.setAttribute("aria-current", "page");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
+}
+
+// 스크롤은 아주 자주 일어나므로 화면을 그리기 직전에 한 번만 계산
+let navUpdateQueued = false;
+
+function queueCurrentNavUpdate() {
+  if (navUpdateQueued) {
+    return;
+  }
+
+  navUpdateQueued = true;
+  window.requestAnimationFrame(function () {
+    navUpdateQueued = false;
+    updateCurrentNav();
+  });
+}
+
+// 주소가 바뀌었을 때(메뉴 클릭, 뒤로·앞으로 가기) 또는 주소가 붙은 채 처음 열렸을 때
+function handleHashChange() {
+  const target = navSections.find(function (section) {
+    return "#" + section.id === window.location.hash;
+  });
+
+  lockedSection = null;
+
+  // 브라우저가 이동·스크롤 복원을 끝낸 다음 프레임에서 위치를 기억하고 표시를 갱신
+  window.requestAnimationFrame(function () {
+    if (target) {
+      lockedSection = target;
+      lockedScrollY = window.scrollY;
+    }
+
+    updateCurrentNav();
+  });
+}
+
+window.addEventListener("scroll", queueCurrentNavUpdate);
+window.addEventListener("resize", queueCurrentNavUpdate);
+window.addEventListener("hashchange", handleHashChange);
+window.addEventListener("load", handleHashChange);
+
+// 모바일 메뉴 : 표시 상태, 버튼 문구, aria-expanded를 한 번에 맞춤
+function setMenuOpen(isOpen) {
+  mainNav.classList.toggle("is-collapsed", !isOpen);
+  menuToggle.textContent = isOpen ? "메뉴 닫기" : "메뉴 열기";
+  menuToggle.setAttribute("aria-expanded", String(isOpen));
+}
+
+function handleMenuToggleClick() {
+  setMenuOpen(menuToggle.getAttribute("aria-expanded") !== "true");
+}
+
+// 목적지를 고르면 이동은 링크(href)가 하고, 펼쳐진 메뉴는 닫음
+function handleNavLinkClick() {
+  setMenuOpen(false);
+}
+
+// ESC로 닫을 수 있게 하고, 숨겨진 링크에 있던 초점을 열기 버튼으로 되돌림
+function handleMenuKeydown(event) {
+  if (event.key === "Escape" && menuToggle.getAttribute("aria-expanded") === "true") {
+    setMenuOpen(false);
+    menuToggle.focus();
+  }
+}
+
+menuToggle.addEventListener("click", handleMenuToggleClick);
+document.addEventListener("keydown", handleMenuKeydown);
+
+navLinks.forEach(function (link) {
+  link.addEventListener("click", handleNavLinkClick);
+});
+
+menuToggle.hidden = false;   // 스크립트가 동작할 때만 버튼을 보임 (동작하지 않으면 메뉴가 펼쳐진 채로 남음)
+setMenuOpen(false);          // 좁은 화면에서는 접힌 채로 시작
+updateCurrentNav();          // 처음 열 때 / 새로고침 뒤의 위치에 맞춤
+
+renderHistory();    // 저장된 문의가 있으면 처음부터 목록에 보이도록 그림
 renderSnsField();   // 처음에는 SNS 영역이 숨겨지고 입력 칸이 disabled가 되도록 맞춤
 refreshAllFields(); // 칸마다 기본 안내 문구와 글자 수(0 / 최대)를 표시
 showStep(1); // 페이지가 열릴 때 1단계로 시작. **위로 옮기지 않기**

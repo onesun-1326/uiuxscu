@@ -117,13 +117,20 @@ body.modal-open{
 }
 
 nav{
+    margin-top: 24px;
+}
+
+/* 메뉴 목록 : 목록(ul·li) 의미는 유지하고 모양만 가로로 */
+nav ul{
     display: flex;
 
     /* 메뉴 들어갈 자리가 부족하면 다음 줄로 이동 */
     flex-wrap: wrap;
 
     gap: 24px;
-    margin-top: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
 }
 
 nav a {
@@ -134,6 +141,33 @@ nav a {
 
 nav a:hover{
     color: var(--green-dark);
+}
+
+/* 현재 위치 : hover와 달리 계속 유지되는 상태. 색 + 굵기 + 밑줄로 표시 (색만으로 구분하지 않음) */
+nav a[aria-current="page"]{
+    color: var(--green-dark);
+    font-weight: 800;
+    text-decoration: underline;
+    text-underline-offset: 6px;
+}
+
+/* 모바일 메뉴 열기·닫기 버튼 : 넓은 화면에서는 숨김, 좁은 화면 규칙(맨 아래 @media)에서 보임 */
+.menu-toggle{
+    display: none;
+    margin-top: 16px;
+    color: var(--text-soft);
+    background-color: transparent;
+    border: 1px solid var(--border);
+}
+
+.menu-toggle:hover{
+    color: var(--green-dark);
+    background-color: var(--surface-soft);
+}
+
+body.dark .menu-toggle:hover{
+    color: var(--bg);
+    background-color: var(--accent);
 }
 
 
@@ -273,7 +307,8 @@ body.dark #themeButton:hover{
 
 /* ===== 작업 분야 탭 ===== */
 
-.tabs {
+.tabs,
+.history-filter {
     display: flex;
 
     /* 자리가 부족하면 다음 줄로 넘어감 */
@@ -283,7 +318,8 @@ body.dark #themeButton:hover{
     margin-bottom: 24px;
 }
 
-.tab {
+.tab,
+.filter-button {
     padding: 12px 20px;
 
     border: 2px solid var(--border);
@@ -298,12 +334,14 @@ body.dark #themeButton:hover{
     cursor: pointer;
 }
 
-.tab:hover {
+.tab:hover,
+.filter-button:hover {
     background-color: var(--surface-soft);
 }
 
 /* 선택된 탭 : 색 + 굵기 + 밑줄 세 가지로 표시. 색만으로 구분하면 색각 이상이 있는 사람은 알아볼 수 없다. */
-.tab.is-active {
+.tab.is-active,
+.filter-button[aria-pressed="true"] {
     color: var(--green-dark);
     border-color: var(--green);
     background-color: var(--surface-soft);
@@ -312,7 +350,8 @@ body.dark #themeButton:hover{
     text-underline-offset: 5px;
 }
 
-body.dark .tab.is-active{
+body.dark .tab.is-active,
+body.dark .filter-button[aria-pressed="true"]{
     color: var(--bg);
     border-color: var(--accent);
     background-color: var(--accent);
@@ -883,6 +922,114 @@ body.dark .unlink-button:hover{     /*다크모드용 hover*/
     display: none;
 }
 
+
+/* ===== 내 문의 내역 ===== */
+
+/* 버튼처럼 보이는 링크 : 다른 자리로 이동하는 동작이므로 button이 아니라 a를 씀 */
+.button-link{
+    display: inline-block;
+    padding: 12px 18px;
+    border-radius: 10px;
+    color: #ffffff;
+    background-color: var(--green);
+    font-weight: 700;
+    text-decoration: none;
+    text-align: center;
+    transition: background-color 0.2s;
+}
+
+.button-link:hover{
+    background-color: var(--green-dark);
+}
+
+body.dark .button-link{
+    color: var(--bg);               /* 다크 모드의 밝은 초록 바탕에는 어두운 글자 */
+}
+
+body.dark .button-link:hover{
+    color: var(--bg);
+}
+
+.button-link:focus-visible{
+    outline: 3px solid var(--focus);
+    outline-offset: 2px;
+}
+
+#historyStatus{
+    margin-top: 0;
+    margin-bottom: 16px;
+    font-weight: 700;
+}
+
+.history-list{
+    list-style-type: none;
+    padding-left: 0;
+    margin: 0;
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* display:flex가 hidden 속성을 덮어쓰기 때문에, 숨김은 따로 지정. */
+.history-list[hidden]{
+    display: none;
+}
+
+.history-item{
+    padding: 16px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    background-color: var(--surface);
+}
+
+.history-head{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 4px 16px;
+}
+
+.history-type{
+    font-weight: 800;
+    color: var(--green-dark);
+}
+
+.history-date,
+.history-meta{
+    margin: 0;
+    font-size: 0.9em;
+    color: var(--text-soft);
+}
+
+.history-message{
+    margin: 8px 0 0;
+    color: var(--text);
+    overflow-wrap: anywhere;
+}
+
+/* 결과 없음 안내 : 이유 + 다음 행동 */
+.history-empty{
+    padding: 24px;
+    border: 2px dashed var(--border);
+    border-radius: 12px;
+    background-color: var(--surface);
+}
+
+.history-empty[hidden]{
+    display: none;
+}
+
+.history-empty p{
+    margin-top: 0;
+    font-weight: 700;
+}
+
+.history-empty [hidden]{
+    display: none;
+}
+
 /* 웹페이지가 표시되는 가로 폭이 768px 이하일 때만 적용 */
 @media (max-width: 768px) {
     body{
@@ -913,8 +1060,22 @@ body.dark .unlink-button:hover{     /*다크모드용 hover*/
         gap: 8px;
     }
 
+    /* 메뉴 열기·닫기 버튼 : 좁은 화면에서만 보임. hidden이면(JS가 꺼진 경우) 보이지 않고 메뉴는 그대로 펼쳐짐 */
+    .menu-toggle{
+        display: block;
+    }
+
+    .menu-toggle[hidden]{
+        display: none;
+    }
+
+    /* 접힘 상태 : 좁은 화면에서만 적용되므로 넓은 화면에서는 메뉴가 항상 보임 */
+    .main-nav.is-collapsed{
+        display: none;
+    }
+
     /*가로메뉴를 위에서 아래로 배치*/
-    nav{
+    nav ul{
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
@@ -944,6 +1105,7 @@ body.dark .unlink-button:hover{     /*다크모드용 hover*/
 
     /* 아래 버튼들은 가로로 늘리지 않습니다 */
     .tab,
+    .filter-button,
     #themeButton,
     .work-button{
         width: auto;
@@ -956,6 +1118,18 @@ body.dark .unlink-button:hover{     /*다크모드용 hover*/
     
     #submitButton{
         align-self: stretch;
+    }
+
+    /* 필터 버튼은 줄바꿈되며 나열하되 누르는 영역은 확보 */
+    .filter-button{
+        min-height: 44px;
+    }
+
+    /* 버튼형 링크는 버튼처럼 가로로 채우고 누르는 영역을 확보 */
+    .button-link{
+        display: block;
+        min-height: 48px;
+        padding-top: 12px;
     }
     
     .modal{

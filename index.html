@@ -18,7 +18,8 @@
     사용자 : 작업물을 보러 온 사람 (채용 담당자, 협업 제안자, 동료 창작자)
     목적 : 어떤 작업을 하는 사람인지 빠르게 파악한다.
     핵심 행동 : 관심 분야를 골라 작업물을 보고, 원본으로 이동하거나 문의를 남긴다.
-    정보 순서 : 소개 > 작업 분야 > 작업물 > Contact
+    정보 순서 : 소개 > 작업 분야 > 작업물 > 문의하기 > 내 문의
+    메뉴 : 소개 / 작업 분야 / 작업물 / 문의하기 / 내 문의 (각 메뉴는 같은 이름의 영역으로 이동)
   -->
   <header>
     <h1>SEONWON</h1>
@@ -30,11 +31,18 @@
       <button id="themeButton" type="button">다크 모드</button>
     </div>
 
-    <nav aria-label="Main Navigation">
-      <a href="#about">소개</a>
-      <a href="#fields">작업 분야</a>
-      <a href="#works">작업물</a>
-      <a href="#contact">Contact</a>
+    <!-- click 이벤트 : 좁은 화면에서 메뉴 열기·닫기. JS가 켜졌을 때만 보임(script.js의 setMenuOpen) -->
+    <button type="button" id="menuToggle" class="menu-toggle" aria-controls="main-nav" aria-expanded="false" hidden>메뉴 열기</button>
+
+    <!-- 메뉴 : 현재 위치는 script.js(updateCurrentNav)가 aria-current="page"로 표시 -->
+    <nav id="main-nav" class="main-nav" aria-label="주요 메뉴">
+      <ul>
+        <li><a href="#about">소개</a></li>
+        <li><a href="#fields">작업 분야</a></li>
+        <li><a href="#works">작업물</a></li>
+        <li><a href="#contact">문의하기</a></li>
+        <li><a href="#history">내 문의</a></li>
+      </ul>
     </nav>
   </header>
 
@@ -122,14 +130,14 @@
     </section>
 
     <!--
-      연락처 : 4단계 문의 흐름
+      문의하기 : 4단계 문의 흐름
       사용자 목표 : 협업·작업 문의를 남긴다
       핵심 행동 : 유형·분야 선택 > 연락 정보 입력 > 내용 확인 후 제출
       완료 조건 : 3단계에서 제출하면 4단계 완료 화면이 표시된다
       단계 : 1 선택 > 2 입력 > 3 확인 > 4 완료 (script.js의 showStep()로 전환)
     -->
     <section id="contact" class="contact-card">
-      <h2>Contact</h2>
+      <h2>문의하기</h2>
 
       <!-- input 이벤트의 결과가 표시되는 자리 -->
       <p id="greeting" aria-live="polite">방문해주셔서 감사합니다.</p>
@@ -319,10 +327,42 @@
 
           <div class="step-actions">
             <button id="restartButton" type="button">새 문의 작성</button>
+            <!-- 제출한 문의가 목록에 들어갔는지 바로 확인하러 가는 링크 -->
+            <a href="#history" class="button-link">내 문의 내역 보기</a>
           </div>
         </div>
 
       </form>
+    </section>
+
+    <!--
+      내 문의 내역 : 제출한 문의를 목록으로 보고 유형별로 골라 봄
+      데이터 : 제출할 때 localStorage에 저장한 기록 (script.js의 saveInquiry / readSavedList)
+      필터 : 전체 / 협업 문의 / 작업 문의 / 기타 (click 이벤트, 선택 상태는 aria-pressed로 표시)
+      결과 안내 : 표시 중인 항목 수 + 결과 없음 2종 (저장된 문의가 없음 / 고른 유형에 맞는 문의가 없음)
+    -->
+    <section id="history">
+      <h2>내 문의 내역</h2>
+      <p>이 브라우저에서 제출한 문의입니다. 서버로 보내지 않고 이 기기의 브라우저에만 저장됩니다.</p>
+
+      <div class="history-filter" role="group" aria-label="문의 유형별 보기">
+        <button type="button" class="filter-button" data-filter="all" aria-pressed="true">전체</button>
+        <button type="button" class="filter-button" data-filter="collab" aria-pressed="false">협업 문의</button>
+        <button type="button" class="filter-button" data-filter="work" aria-pressed="false">작업 문의</button>
+        <button type="button" class="filter-button" data-filter="etc" aria-pressed="false">기타</button>
+      </div>
+
+      <!-- 표시 중인 항목 수 안내. 필터를 바꾸면 스크린리더가 읽어 줌 -->
+      <p id="historyStatus" role="status"></p>
+
+      <ul id="historyList" class="history-list"></ul>
+
+      <!-- 결과 없음 안내 : 문구와 다음 행동은 script.js(renderHistory)가 상황에 맞게 바꿈 -->
+      <div id="historyEmpty" class="history-empty" hidden>
+        <p id="historyEmptyText"></p>
+        <a id="historyEmptyLink" class="button-link" href="#contact">문의 남기러 가기</a>
+        <button type="button" id="historyShowAll">전체 보기</button>
+      </div>
     </section>
 
   </main>
