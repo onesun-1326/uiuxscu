@@ -11,6 +11,7 @@ const works = [
     title: "고대 유적 환경",
     category: "3d",
     thumb: "assets/works/The_Hidden_Temple.jpg",
+    alt: "숨겨진 고대 사원 3D 배경",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "UE5의 루멘과 나나이트를 활용하여 배경의 광원과 씬의 디테일을 구현했습니다.",
     link: "https://wonseon.artstation.com/projects/DLRoO0",
     linkLabel: "ArtStation에서 보기"
@@ -20,6 +21,7 @@ const works = [
     title: "전사 석상",
     category: "3d",
     thumb: "assets/works/Guardian.jpg",
+    alt: "사원을 수호하는 가디언 석상",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "지브러쉬로 제작한 석상",
     link: "https://wonseon.artstation.com/projects/wrYlD6",
     linkLabel: "ArtStation에서 보기"
@@ -29,6 +31,7 @@ const works = [
     title: "사원 구조물",
     category: "3d",
     thumb: "assets/works/Temple_props.jpg",
+    alt: "고대 사원 배경에 쓰인 건물 에셋의 세부 디테일",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "배경제작을 위해 정리한 프랍의 디테일을 모아놓았습니다. ",
     link: "https://wonseon.artstation.com/projects/DLG30G",
     linkLabel: "ArtStation에서 보기"
@@ -38,6 +41,7 @@ const works = [
     title: "강아지 라인 드로잉",
     category: "illust",
     thumb: "assets/works/2dDrawing.jpg",
+    alt: "강아지 선화 일러스트",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "반려동물 라인 드로잉",
     link: "https://www.instagram.com/p/Dd9FvDMD2z9/",
     linkLabel: "Instagram에서 보기"
@@ -47,6 +51,7 @@ const works = [
     title: "강아지 컬러 일러스트",
     category: "illust",
     thumb: "assets/works/2dIllust.jpg",
+    alt: "다양한 자세의 강아지들을 컬러로 그린 일러스트",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "반려동물 캐주얼 일러스트",
     link: "https://www.instagram.com/p/DeFAN1Zj2FG/",
     linkLabel: "Instagram에서 보기"
@@ -56,6 +61,7 @@ const works = [
     title: "Best Stick Ever",
     category: "illust",
     thumb: "assets/works/Best Stick_Ever.jpg",
+    alt: "'BEST STICK EVER!' 문구와 막대기를 문 강아지 일러스트 굿즈",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "반려동물 일러스트로 제작한 굿즈",
     link: "https://www.instagram.com/p/DeL92Jpj-5_/",
     linkLabel: "Instagram에서 보기"
@@ -65,6 +71,7 @@ const works = [
     title: "GAIFF",
     category: "video",
     thumb: "assets/works/GAIFF.jpg",
+    alt: "GAIFF 공모전 제출작, 강감찬 장군을 기리는 AI 영상. 수묵화풍 산에 금빛 별이 떨어지는 장면",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "2026 관악 생성형 AI 영상 콘텐츠 공모전 (GAIFF)에 제출했던 AI로 제작된 영상",
     embed: "https://player.vimeo.com/video/1237158197",
     link: "https://vimeo.com/1237158197",
@@ -75,6 +82,7 @@ const works = [
     title: "HEALING FARM",
     category: "video",
     thumb: "assets/works/HEALING_FARM.jpg",
+    alt: "유럽 동화풍 AI 영상. 'HEALING FARM' 간판이 있는 목장 풍경",   // 이미지 대체 텍스트 : 제목을 반복하지 않고 그림에 보이는 것을 설명
     desc: "미드저니와 캡컷을 이용해서 제작한 AI애니메이션",
     embed: "https://player.vimeo.com/video/1237160266",
     link: "https://vimeo.com/1237160266",
@@ -112,6 +120,7 @@ function resetTabsAndPanels() {
   tabs.forEach(function (tab) {
     tab.classList.remove("is-active");
     tab.setAttribute("aria-selected", "false");
+    tab.tabIndex = -1;               // 선택되지 않은 탭은 Tab 키 순서에서 빠짐 (←/→ 키로 이동)
   });
 
   panels.forEach(function (panel) {
@@ -127,6 +136,7 @@ function activateTab(clickedTab) {
 
   clickedTab.classList.add("is-active");
   clickedTab.setAttribute("aria-selected", "true");
+  clickedTab.tabIndex = 0;
 
   targetPanel.classList.add("is-active");
   targetPanel.hidden = false;
@@ -141,13 +151,43 @@ tabs.forEach(function (tab) {
   tab.addEventListener("click", handleTabClick);
 });
 
+// 키보드 : ← → 로 이웃 탭, Home/End 로 처음·끝 탭으로 이동하면서 바로 선택
+function handleTabKeydown(event) {
+  const list = Array.from(tabs);
+  const index = list.indexOf(event.currentTarget);
+  let next = -1;
+
+  if (event.key === "ArrowRight") {
+    next = (index + 1) % list.length;
+  } else if (event.key === "ArrowLeft") {
+    next = (index - 1 + list.length) % list.length;
+  } else if (event.key === "Home") {
+    next = 0;
+  } else if (event.key === "End") {
+    next = list.length - 1;
+  }
+
+  if (next === -1) {
+    return;
+  }
+
+  event.preventDefault();          // 화면이 좌우·위아래로 움직이지 않게 함
+  resetTabsAndPanels();
+  activateTab(list[next]);
+  list[next].focus();
+}
+
+tabs.forEach(function (tab) {
+  tab.addEventListener("keydown", handleTabKeydown);
+});
+
 
 /* ========== 작업물 그리드 그리기 ========== */
 
 const workGrid = document.querySelector("#workGrid");
 const filterStatus = document.querySelector("#filterStatus");
-const checkAll = document.querySelector("#checkAll");
-const categoryChecks = document.querySelectorAll(".category-check");
+const workFilterButtons = document.querySelectorAll(".work-filter .filter-button");
+let currentWorkCategory = "all";   // 지금 선택된 분야 : all, 3d, illust, video
 
 // 작업물 하나를 카드 HTML로 만듦
 function createCard(work) {
@@ -160,7 +200,7 @@ function createCard(work) {
     <li class="work-card">
       <button type="button" class="work-button" data-id="${work.id}">
         <span class="work-thumb">
-          <img src="${work.thumb}" alt="${work.title}">
+          <img src="${work.thumb}" alt="${work.alt}">
           ${playIcon}
         </span>
         <span class="work-info">
@@ -172,61 +212,38 @@ function createCard(work) {
   `;
 }
 
-// 체크된 분야만 골라 그리드를 다시 그림
+// 선택된 분야의 작업만 골라 그리드를 다시 그림
 function renderWorks() {
-  const checkedValues = [];
-
-  categoryChecks.forEach(function (check) {
-    if (check.checked) {
-      checkedValues.push(check.value);
-    }
-  });
-
   const filtered = works.filter(function (work) {
-    return checkedValues.includes(work.category);
+    return currentWorkCategory === "all" || work.category === currentWorkCategory;
   });
 
   workGrid.innerHTML = filtered.map(createCard).join("");
 
-// 안내 문구 갱신
-if (filtered.length === 0) {
-  filterStatus.textContent = "선택한 분야가 없습니다. 분야를 하나 이상 선택해 주세요.";
-} else if (checkedValues.length === categoryChecks.length) {
-  filterStatus.textContent = "전체 작업이 선택되었습니다.";
-} else {
-  // 체크된 분야 코드(3d, illust...)를 화면용 이름으로 바꿔 이어 붙임
-  const names = checkedValues.map(function (value) {
-    return categoryLabels[value];
+  // 선택된 버튼만 aria-pressed="true" (글씨·테두리·밑줄은 CSS가 같은 속성을 보고 바꿈)
+  workFilterButtons.forEach(function (button) {
+    button.setAttribute("aria-pressed", String(button.dataset.category === currentWorkCategory));
   });
 
-  filterStatus.textContent = "전체 작업 중 " + names.join(", ") + " 분야가 선택되었습니다.";
+  // 건수 안내 (role="status" 라서 바뀌면 스크린리더가 읽음)
+  if (filtered.length === 0) {
+    filterStatus.textContent = "표시할 작업이 없습니다.";
+  } else if (currentWorkCategory === "all") {
+    filterStatus.textContent = "전체 작업 " + filtered.length + "개를 표시합니다.";
+  } else {
+    filterStatus.textContent = "전체 " + works.length + "개 중 " + categoryLabels[currentWorkCategory] + " 작업 " + filtered.length + "개를 표시합니다.";
   }
 }
 
-/* ========== 분야 필터 (change 이벤트) ========== */
+/* ========== 분야 필터 (click 이벤트) ========== */
 
-// 전체 체크 > 개별 체크 전부 맞추기
-function handleCheckAll() {
-  categoryChecks.forEach(function (check) {
-    check.checked = checkAll.checked;
-  });
-
-  renderWorks(); // JS로 바꾼 값은 change가 발생하지 않으므로 직접 호출
-}
-
-// 개별 체크 > 전부 켜졌을 때만 전체 체크도 켜짐
-function handleCategoryCheck() {
-  checkAll.checked = Array.from(categoryChecks).every(function (check) {
-    return check.checked;
-  });
-
+function handleWorkFilterClick(event) {
+  currentWorkCategory = event.currentTarget.dataset.category;
   renderWorks();
 }
 
-checkAll.addEventListener("change", handleCheckAll);
-
-categoryChecks.forEach(function (check) {
-  check.addEventListener("change", handleCategoryCheck);
+workFilterButtons.forEach(function (button) {
+  button.addEventListener("click", handleWorkFilterClick);
 });
 
 renderWorks(); // 페이지가 열릴 때 한 번 그림
@@ -239,10 +256,13 @@ const modalMedia = document.querySelector("#modalMedia");
 const modalTitle = document.querySelector("#modalTitle");
 const modalDesc = document.querySelector("#modalDesc");
 const modalLink = document.querySelector("#modalLink");
+const modalCloseButton = document.querySelector(".modal-close");
 
+let lastFocusedBeforeModal = null; // 창을 열기 직전에 초점이 있던 카드 : 닫을 때 여기로 되돌려 줌
 let currentWork = null; //지금 모달에 열려있는 작업. 버튼을 눌렀을 때 "어떤 작업인지" 알기위해 보관.
 
 function openModal(work) {
+  lastFocusedBeforeModal = document.activeElement;   // 어떤 카드로 열었는지 기억
   // 영상이면 플레이어를, 그 외에는 큰 이미지를 넣음
   if (work.category === "video") {
     modalMedia.innerHTML = `
@@ -253,25 +273,33 @@ function openModal(work) {
               allowfullscreen></iframe>
     `;
   } else {
-    modalMedia.innerHTML = `<img src="${work.thumb}" alt="${work.title}">`;
+    modalMedia.innerHTML = `<img src="${work.thumb}" alt="${work.alt}">`;
   }
 
   modalTitle.textContent = work.title;
   modalDesc.textContent = work.desc;
   modalLink.href = work.link;
-  modalLink.textContent = work.linkLabel;
+  modalLink.textContent = work.linkLabel + " (새 탭)";   // target="_blank" 라서 새 탭에서 열린다고 미리 알림
 
   workModal.hidden = false;
   document.body.classList.add("modal-open"); // 뒷배경 스크롤 막기
 
+  modalCloseButton.focus();   // 창이 열리면 초점을 창 안(닫기 버튼)으로 옮김. 안 옮기면 키보드 사용자는 창 뒤쪽 페이지에 남음
+
   currentWork = work;  //문의하기 버튼이 어떤작업인지 알 수 있도록 기억함. 열 때 마다"지금 보는 작업"을 기억.
 }
 
-function closeModal() {
+// restoreFocus : 닫은 뒤 열었던 카드로 초점을 되돌릴지. (문의하기로 이동할 때는 false : 이동한 곳에 초점을 줌)
+function closeModal(restoreFocus = true) {
   workModal.hidden = true;
   document.body.classList.remove("modal-open");
   
   modalMedia.innerHTML = "";  // 비워주지 않으면 모달을 닫아도 영상 소리가 계속 납니다
+
+  if (restoreFocus && lastFocusedBeforeModal && document.contains(lastFocusedBeforeModal)) {
+    lastFocusedBeforeModal.focus({ preventScroll: true });   // 키보드 사용자가 보던 자리로 돌아감
+  }
+  lastFocusedBeforeModal = null;
 }
 
 // 카드는 JS가 나중에 만들기 때문에, 부모인 그리드에 이벤트를 겁니다
@@ -314,7 +342,7 @@ const modalInquiryButton = document.querySelector("#modalInquiryButton");   // �
 function handleModalInquiryClick(){
   const work = currentWork;     //모달을 닫기전에 closeModal()이 currentWork를 지울 수 있어 닫기전에 변수를 잡아둠.
 
-  closeModal();                 //모달을 닫고 배경 스크롤, 포커스 원위치.
+  closeModal(false);            //모달을 닫음. 초점은 되돌리지 않고 아래 함수가 문의 폼으로 옮김.
   startInquiryFromWork(work);   //아래의 작업물에서 문의로 이어지는 블록함수(문의 흐름시작)
 }
 

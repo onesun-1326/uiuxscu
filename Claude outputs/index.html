@@ -53,7 +53,7 @@
       <h3>3D Environment Artist</h3>
 
       <div class="about-row">
-        <img src="assets/images/profile.jpg" alt="SEONWON 프로필 이미지">
+        <img src="assets/images/profile.jpg" alt="SEONWON 프로필: 강아지 일러스트 아이콘">
 
         <div class="about-text">
           <p>안녕하세요. 저는 3D 배경 디자이너로 일하며 디지털 트윈, VR, 메타버스 콘텐츠를 만들어 왔습니다.</p>
@@ -69,26 +69,27 @@
 
       <!-- click 이벤트 : 탭 전환 -->
       <div class="tabs" role="tablist" aria-label="작업 분야 선택">
-        <button type="button" class="tab is-active" data-target="#field-3d" aria-selected="true">3D 그래픽</button>
-        <button type="button" class="tab" data-target="#field-illust" aria-selected="false">2D 일러스트</button>
-        <button type="button" class="tab" data-target="#field-video" aria-selected="false">AI 영상</button>
+        <!-- role="tab" : 스크린리더에 탭이라고 알림. 선택된 탭만 Tab 키로 닿고, 탭 사이는 ←/→/Home/End 키로 이동 -->
+        <button type="button" class="tab is-active" role="tab" id="tab-3d" aria-controls="field-3d" aria-selected="true" data-target="#field-3d">3D 그래픽</button>
+        <button type="button" class="tab" role="tab" id="tab-illust" aria-controls="field-illust" aria-selected="false" tabindex="-1" data-target="#field-illust">2D 일러스트</button>
+        <button type="button" class="tab" role="tab" id="tab-video" aria-controls="field-video" aria-selected="false" tabindex="-1" data-target="#field-video">AI 영상</button>
       </div>
 
-      <div id="field-3d" class="panel is-active">
+      <div id="field-3d" class="panel is-active" role="tabpanel" aria-labelledby="tab-3d">
         <h3>3D 그래픽</h3>
         <p>게임과 실시간 콘텐츠에 쓰이는 배경과 구조물을 만듭니다.</p>
         <p>모듈러와 트림시트로 제작해 재사용과 수정이 쉬운 구조를 설계합니다.</p>
         <p>디지털 트윈, VR, 메타버스 프로젝트를 주로 맡아 왔습니다.</p>
       </div>
 
-      <div id="field-illust" class="panel" hidden>
+      <div id="field-illust" class="panel" role="tabpanel" aria-labelledby="tab-illust" hidden>
         <h3>2D 일러스트</h3>
         <p>동물을 주제로 한 드로잉과 굿즈 디자인 작업을 합니다.</p>
         <p>드로잉과 일러스트 작업으로 스티커와 엽서 등의 굿즈를 제작중 입니다.</p>
         <p>무념무개라는 이름으로 작업을 올리고 있습니다.</p>
       </div>
 
-      <div id="field-video" class="panel" hidden>
+      <div id="field-video" class="panel" role="tabpanel" aria-labelledby="tab-video" hidden>
         <h3>AI 영상</h3>
         <p>AI 도구를 활용해 짧은 영상을 만듭니다.</p>
         <p>장면의 분위기와 연출을 직접 설계하고 다듬는 과정을 거칩니다.</p>
@@ -100,30 +101,15 @@
     <section id="works">
       <h2>작업물</h2>
 
-      <!-- change 이벤트 : 분야 필터 -->
-      <div class="work-filter">
-        <label class="checkrow">
-          <input type="checkbox" id="checkAll" checked>
-          전체
-        </label>
-
-        <label class="checkrow">
-          <input type="checkbox" class="category-check" value="3d" checked>
-          3D 그래픽
-        </label>
-
-        <label class="checkrow">
-          <input type="checkbox" class="category-check" value="illust" checked>
-          2D 일러스트
-        </label>
-
-        <label class="checkrow">
-          <input type="checkbox" class="category-check" value="video" checked>
-          AI 영상
-        </label>
+      <!-- click 이벤트 : 분야 필터. 선택된 버튼은 aria-pressed="true"이고 글씨·테두리·밑줄도 달라짐 -->
+      <div class="work-filter" role="group" aria-label="작업 분야별 보기">
+        <button type="button" class="filter-button" data-category="all" aria-pressed="true">전체</button>
+        <button type="button" class="filter-button" data-category="3d" aria-pressed="false">3D 그래픽</button>
+        <button type="button" class="filter-button" data-category="illust" aria-pressed="false">2D 일러스트</button>
+        <button type="button" class="filter-button" data-category="video" aria-pressed="false">AI 영상</button>
       </div>
 
-      <p id="filterStatus" aria-live="polite">전체 작업이 선택되었습니다.</p>
+      <p id="filterStatus" role="status">전체 작업 8개를 표시합니다.</p>
 
       <!-- 카드는 script.js가 채웁니다 -->
       <ul id="workGrid" class="work-grid"></ul>
